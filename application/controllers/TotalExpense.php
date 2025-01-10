@@ -103,6 +103,8 @@ class TotalExpense extends CI_Controller
 
         // line chart
 
+        $data['currentMonth'] = date('F Y');  // e.g., "November 2024"
+
         // Load the view with the fetched data
         $this->load->view("totalexpense", $data);
     }

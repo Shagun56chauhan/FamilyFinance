@@ -179,11 +179,12 @@
                     const monthlyLabels = <?php echo json_encode($monthly_expenses['labels']); ?>;
                     const monthlyAmounts = <?php echo json_encode($monthly_expenses['amounts']); ?>;
 
+                    const currentMonth = "<?php echo $currentMonth; ?>";
                     // Prepare data for the line chart
                     const lineChartData = {
                         labels: monthlyLabels.map(date => date.split('-').slice(2).join('/')),  // Show "01", "02", etc.
                         datasets: [{
-                            label: 'Monthly Expenses',
+                            label: `Distance Traveled in ${currentMonth}`,
                             data: monthlyAmounts, // Individual amounts per day across multiple months
                             backgroundColor: 'rgba(75, 192, 192, 0.2)', // Line fill color
                             borderColor: 'rgba(75, 192, 192, 1)', // Line border color
