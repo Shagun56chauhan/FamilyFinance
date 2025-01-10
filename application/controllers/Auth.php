@@ -53,7 +53,7 @@ class Auth extends CI_Controller
             $this->session->set_userdata('user_id', $user['id']); // Store user ID
             $this->session->set_userdata('name', $name); // Store username in session
             $this->session->set_flashdata('message', 'You have successfully logged in!');
-            redirect('expense');
+            redirect('totalexpense');
         } else {
             $this->session->set_flashdata('message', 'Invalid username or password');
             redirect('auth');

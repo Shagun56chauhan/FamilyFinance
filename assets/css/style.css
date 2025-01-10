@@ -283,6 +283,12 @@ button:hover {
 .shopping-cart{
     width: 100%;
     height: max-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+           
+    text-align: center;
     
    
  
@@ -429,6 +435,93 @@ button:hover {
     padding: 10px;
 }
 
+ /* statistic chart */
+
+/* Row container with 4 columns */
+.row-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 20px; /* Space between items */
+    padding: 20px; /* Space around the container */
+}
+
+/* Each chart or table item */
+.chart-item {
+    border: 1px solid #ddd; /* Optional: border for clarity */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 20px; /* Internal padding */
+    background: #f9f9f9; /* Light background */
+    overflow: hidden; /* Prevent content overflow */
+    text-align: center; /* Center-align content */
+}
+
+/* Make charts responsive */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Table styling */
+.table-container {
+    overflow-x: auto; /* Enable horizontal scroll for tables */
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background: #2A9D8F; /* Header background */
+    color: white; /* Header text color */
+}
+
+.table tfoot th {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+
+
+
+
+/* statistic chart */
+
+
+.container {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    padding: 20px;
+}
+.top-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.middle-section {
+    grid-column: span 2;
+}
+.bottom-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.chart, .table {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 
 
@@ -526,5 +619,33 @@ button:hover {
     .mb-4{
         width: 250px;
     }
+
+
+    /* statistics */
+
+    .container {
+        grid-template-rows: auto;
+        grid-template-columns: 1fr; /* Switch to 1 column */
+    }
+
+    .top-section {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+
+    .middle-section {
+        grid-column: span 1; /* Adjust to fit single column */
+    }
+
+    .bottom-section {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+
+    /* statistics */
+
+    .table tfoot th {
+        font-weight: bold;
+        font-size: 1rem;
+    }
+   
 
 }

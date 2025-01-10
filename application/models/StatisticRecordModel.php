@@ -17,76 +17,6 @@ class StatisticRecordModel extends CI_Model
     }
   
 
-// Fetch records filtered by vehicle type and user_id
-public function getFilteredRecords($type, $user_id)
-{
-    $this->db->where('type', $type);
-    $this->db->where('user_id', $user_id);
-    $query = $this->db->get('vehicle');
-    return $query->result_array();
-}
-  
-
-
-// dropdown
-    // Get all vehicle types (if you want to list available types)
-    public function getVehicleTypes($user_id)
-    {
-        $this->db->distinct();
-        $this->db->select('type');
-        $this->db->where('user_id', $user_id);
-        $query = $this->db->get('admin_vehicle');
-        return $query->result_array();
-    }
-    
-
-// dropdown
-
-
-
-
-// Calculate total distance for a specific vehicle type and user
-public function getTotalDistance($type, $user_id)
-{
-    $this->db->select('reading');
-    $this->db->from('vehicle');
-    $this->db->where('type', $type);
-    $this->db->where('user_id', $user_id);  // Ensure it's for the logged-in user
-    $this->db->order_by('created_at', 'ASC');
-    $query = $this->db->get();
-    $readings = $query->result_array();
-
-    $total_distance = 0;
-
-
-    // Calculate total distance traveled, even for more than two readings
-    if (count($readings) > 1) {
-        $initial_reading = $readings[0]['reading']; // Take the first reading as the initial reading
-
-        // Iterate through all readings to sum the difference
-        for ($i = 1; $i < count($readings); $i++) {
-            $current_reading = $readings[$i]['reading'];
-
-            // Ensure readings are valid numbers and calculate the difference
-            if (is_numeric($current_reading) && is_numeric($initial_reading)) {
-                $distance_difference = $current_reading - $initial_reading;
-
-                if ($distance_difference > 0) { // Ensure no negative values
-                    $total_distance += $distance_difference;
-                }
-
-                // Update initial reading to current for the next iteration
-                $initial_reading = $current_reading;
-            }
-        }
-    }
-
-    return $total_distance;
-}
-
-
-
-
 
 
 // bar
@@ -159,6 +89,61 @@ public function getTotalDistanceByType($user_id) {
 // pie
 
 
+// monthlypie
+
+
+public function getTotalDistanceForCurrentMonth($user_id) {
+    // Get the first and last dates of the current month
+    $start_date = date('Y-m-01'); // First day of the current month
+    $end_date = date('Y-m-t');   // Last day of the current month
+
+    $this->db->select('type, reading, created_at');
+    $this->db->from('vehicle');
+    $this->db->where('user_id', $user_id);
+    $this->db->where('created_at >=', $start_date);
+    $this->db->where('created_at <=', $end_date);
+    $this->db->order_by('created_at ASC');
+    $query = $this->db->get();
+    $readings = $query->result_array();
+
+    $current_month_distances = [];
+    
+    // Group readings by vehicle type
+    $grouped_readings = [];
+    foreach ($readings as $record) {
+        $type = $record['type'];
+        $reading = floatval($record['reading']);
+        if (!isset($grouped_readings[$type])) {
+            $grouped_readings[$type] = [];
+        }
+        $grouped_readings[$type][] = $reading;
+    }
+
+    // Calculate total distance for each vehicle type
+    foreach ($grouped_readings as $type => $type_readings) {
+        $total_distance = 0;
+
+        // Iterate over readings to calculate total distance
+        for ($i = 1; $i < count($type_readings); $i++) {
+            $distance = $type_readings[$i] - $type_readings[$i - 1];
+            if ($distance > 0) { // Only consider positive distances
+                $total_distance += $distance;
+            }
+        }
+
+        // Store total distance for the current vehicle type
+        $current_month_distances[$type] = $total_distance;
+    }
+
+    // Sort distances in descending order (optional)
+    arsort($current_month_distances);
+
+    return $current_month_distances; // Return distances for the current month
+}
+
+
+
+// monthlypie
 
 
 
@@ -225,7 +210,7 @@ public function getTotalDistanceByType($user_id) {
 // line chart
 
 public function getMonthlyVehicleRecords($user_id) {
-    $this->db->select('reading, DATE(created_at) as record_date');
+    $this->db->select('reading, DATE(created_at) as record_date, type as vehicle_type');
     $this->db->from('vehicle');
     $this->db->where('user_id', $user_id);
 
@@ -235,6 +220,7 @@ public function getMonthlyVehicleRecords($user_id) {
 
     $this->db->where('DATE(created_at) >=', $currentMonthStart);
     $this->db->where('DATE(created_at) <=', $currentMonthEnd);
+
     $this->db->order_by('created_at', 'ASC');  // Ensure chronological order
 
     $query = $this->db->get();
@@ -248,7 +234,60 @@ public function getMonthlyVehicleRecords($user_id) {
 
 
 
+
 // line chart
+
+
+ // Function to get expenses by selected month
+ public function get_expenses_by_month($selected_month)
+{
+    // Get the current year to filter data correctly
+    $current_year = date('Y');
+    
+    // Fetch records for the selected month of the current year, ordered by date
+    $query = $this->db->select('type, reading, created_at')
+                      ->from('vehicle')
+                      ->where('YEAR(created_at)', $current_year)  // Ensure the correct year is selected
+                      ->where('MONTH(created_at)', $selected_month) // Filter by the selected month
+                      ->order_by('created_at', 'ASC')  // Order by date (ascending) for each vehicle type
+                      ->get();
+
+    // Fetch the results
+    $records = $query->result_array();
+
+    $vehicle_readings = [];
+    $total_distances = [];
+
+    // Group readings by vehicle type and calculate the total distance
+    foreach ($records as $record) {
+        $vehicle_type = $record['type'];
+        $reading = $record['reading'];
+        
+        if (!isset($vehicle_readings[$vehicle_type])) {
+            $vehicle_readings[$vehicle_type] = [];
+        }
+
+        // Add the reading to the list of readings for this vehicle type
+        $vehicle_readings[$vehicle_type][] = $reading;
+    }
+
+    // Now calculate the total distance for each vehicle type
+    foreach ($vehicle_readings as $vehicle_type => $readings) {
+        $total_distance = 0;
+        // Calculate distance by subtracting previous reading from the current reading
+        for ($i = 1; $i < count($readings); $i++) {
+            $total_distance += ($readings[$i] - $readings[$i - 1]); // Current reading - Previous reading
+        }
+        $total_distances[] = [
+            'type' => $vehicle_type,
+            'total_distance' => $total_distance
+        ];
+    }
+
+    return $total_distances;
+}
+
+
 
 
 

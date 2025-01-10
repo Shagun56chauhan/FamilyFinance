@@ -6,6 +6,10 @@ Class ViewRecord extends CI_Controller{
     function __construct()
     {
         parent::__construct();
+          // Check if the user is logged in before accessing the page
+          if (!$this->session->userdata('user_id')) {
+            redirect('auth'); // Redirect to login page if not logged in
+        }
         $this->load->model("ViewRecordModel");
         $this->load->library('session');
               
@@ -14,16 +18,34 @@ Class ViewRecord extends CI_Controller{
         
         // Get user ID from session
         $user_id = $this->session->userdata('user_id');
+        $selected_type = $this->input->get('type');  // Get selected type from the form
 
         // Fetch orders from the model
-        $data['record'] = $this->ViewRecordModel->getUsers($user_id);
+        $data['records'] = $this->ViewRecordModel->getUsers($user_id ,$selected_type);
 
-        $this->load->view("viewrecord", $data);
+        // table 2
+
+        $data['record_types'] = $this->ViewRecordModel->getVehicleTypes($user_id); // Keep the vehicle types for the dropdown
+       
+       
+
+        // Calculate the total distance for the selected vehicle type and user
+        $data['total_distance'] = $this->ViewRecordModel->getTotalDistance($selected_type, $user_id);
+
+
+   
+      // Pass the selected type to the view
+      $data['selected_type'] = $selected_type;
+
+        // table2
+
+       
 
         if ($this->session->flashdata('message')) {
             $data['message'] = $this->session->flashdata('message');
         }
 
+        $this->load->view("viewrecord", $data);
 
     }
 

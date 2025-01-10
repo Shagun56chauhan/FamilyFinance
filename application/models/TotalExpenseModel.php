@@ -7,28 +7,8 @@ class TotalExpenseModel extends CI_Model
         $this->load->database();
     }
 
-    // Function to fetch expenses for the user, optionally filtered by expense type
-    function getUsers($user_id, $type) {
-        
-        $this->db->where('user_id', $user_id);
-      
-        if ($type) {
-            $this->db->where('type', $type); // Filter by selected expense type
-        }
-        $query = $this->db->get('expense');
-           
-      
-        return $query->result_array();
-    }
 
-      // Method to get unique expense types for a user
-      function getUniqueExpenseTypes($user_id) {
-        $this->db->select('type');
-        $this->db->distinct();
-        $this->db->where('user_id', $user_id);
-        $query = $this->db->get('admin_expense');
-        return $query->result_array();
-    }
+   
 
 
 
@@ -74,7 +54,7 @@ public function getWeeklyExpenses($user_id) {
   public function getMonthlyExpenses($user_id, $startDate, $endDate) {
     $query = $this->db->query("
         SELECT 
-            amount,
+            amount,type,
             DATE_FORMAT(created_at, '%Y-%m-%d') as date
         FROM expense
         WHERE user_id = ? 
@@ -115,6 +95,32 @@ public function get_types( $user_id) {
 
      return $query->result_array(); // Return result as an array
  }
+
+
+
+//  second pie
+
+
+public function get_pietypes($user_id) {
+    // Get current month and year
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+
+    // Query to fetch the expense type, amount, and filter by current month and year
+    $this->db->select('type, SUM(amount) as amount');
+    $this->db->where('user_id', $user_id);
+    $this->db->where('MONTH(created_at)', $currentMonth); // Filter by current month
+    $this->db->where('YEAR(created_at)', $currentYear); // Filter by current year
+    $this->db->group_by('type');
+    $this->db->order_by('type'); // Order by type for clarity
+    $query = $this->db->get('expense'); // Assuming 'expenses' is your table name
+
+    return $query->result_array();
+}
+
+
+
+// second pie
 }
 
 

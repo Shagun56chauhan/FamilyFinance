@@ -11,6 +11,10 @@ class Expense extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+         // Check if the user is logged in before accessing the page
+        if (!$this->session->userdata('user_id')) {
+            redirect('auth'); // Redirect to login page if not logged in
+        }
         $this->load->model("ExpenseModel");
         $this->load->library('session');
         $this->load->helper('url');
