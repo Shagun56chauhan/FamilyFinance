@@ -91,10 +91,10 @@
                                     <td><?= $records['reading']; ?></td>
                                     <td><?= $records['created_at']; ?></td>
                                     <td><?= $records['remarks']; ?></td>
-                                    <td> <a href="<?php echo base_url('viewrecord/edit/') . $records['id']; ?>"
+                                    <td> <a href="<?php echo base_url('ViewRecord/edit/') . $records['id']; ?>"
                                             class="btn btn-info btns">Edit</a>
                                         &nbsp;
-                                        <a href="<?php echo base_url('viewrecord/delete/') . $records['id']; ?>"
+                                        <a href="<?php echo base_url('ViewRecord/delete/') . $records['id']; ?>"
                                             class="btn btn-danger btns"
                                             onclick="return confirm('Are you sure you want to delete this?')">
                                             Delete

@@ -28,7 +28,7 @@
 
 
 
-    <form action="<?php echo base_url('expense/update') ?>" method="post" class="forms">
+    <form action="<?php echo base_url('Expense/update') ?>" method="post" class="forms">
 
 
 

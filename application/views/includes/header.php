@@ -14,7 +14,7 @@
             <div class="hover dropdown">
             <a href="<?php echo base_url('auth'); ?>" id="login_btn" style="display: none;">LOG IN</a>
                 <div class="dropdown-content">
-                    <a href="<?php echo base_url('auth/logout'); ?>" id="log_out">LOG OUT</a>
+                    <a href="<?php echo base_url('Auth/logout'); ?>" id="log_out">LOG OUT</a>
                 </div>
             </div>
 

@@ -7,8 +7,8 @@ class TotalExpense extends CI_Controller
     function __construct()
     {
         parent::__construct();
-          // Check if the user is logged in before accessing the page
-          if (!$this->session->userdata('user_id')) {
+        // Check if the user is logged in before accessing the page
+        if (!$this->session->userdata('user_id')) {
             redirect('auth'); // Redirect to login page if not logged in
         }
         $this->load->model("TotalExpenseModel");
@@ -20,41 +20,39 @@ class TotalExpense extends CI_Controller
         // Get user ID from session
         $user_id = $this->session->userdata('user_id');
 
-        
+
 
 
 
         // table for per month expense
         // Get selected month from the dropdown
+        // Get selected year and month from the dropdown
+        $selected_year = $this->input->get('year');
         $selected_month = $this->input->get('month');
 
-        // If the selected month is in the format 'YYYY-MM', extract the month number
-        if ($selected_month) {
-            $selected_month = date('m', strtotime($selected_month)); // Extract the month number
-        }
+        // Fetch expense data if year and month are selected, otherwise set to an empty array
+        $data['month_types'] = ($selected_year && $selected_month)
+            ? $this->TotalExpenseModel->get_expenses_by_year_month($selected_year, $selected_month)
+            : [];
 
-
-        // Fetch expense data if a month is selected, otherwise set to an empty array
-        $data['month_types'] = $selected_month ? $this->TotalExpenseModel->get_expenses_by_month($selected_month) : [];
-        
+        $data['selected_year'] = $selected_year;
         $data['selected_month'] = $selected_month;
-        
-         // List of month names for the dropdown
-    $data['months'] = [
-        1 => 'January',
-        2 => 'February',
-        3 => 'March',
-        4 => 'April',
-        5 => 'May',
-        6 => 'June',
-        7 => 'July',
-        8 => 'August',
-        9 => 'September',
-        10 => 'October',
-        11 => 'November',
-        12 => 'December',
-    ];
-       
+
+        // List of month names for the dropdown
+        $data['months'] = [
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December',
+        ];
 
         //    table for per monh expense
 
@@ -84,7 +82,7 @@ class TotalExpense extends CI_Controller
 
         // second pie
         $data['pietypes'] = $this->TotalExpenseModel->get_pietypes($user_id);
-       
+
 
         // second pie
 
@@ -179,5 +177,5 @@ class TotalExpense extends CI_Controller
         return $monthlyData;
     }
 
-   
+
 }

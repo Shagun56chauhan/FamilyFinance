@@ -24,7 +24,7 @@
     <?php endif; ?>
 
 
-<form action="<?php echo base_url('auth/login')?>" method="post" class="forms" onsubmit="return validateForm()">
+<form action="<?php echo base_url('Auth/login')?>" method="post" class="forms" onsubmit="return validateForm()">
     <div class="forms2">
     <h2>LOGIN</h2>
     <?php if (isset($_GET['error'])) { ?>

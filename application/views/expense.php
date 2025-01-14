@@ -28,7 +28,7 @@
 
 
 
-    <form action="<?php echo base_url('expense/submit_btn') ?>" method="post" class="forms">
+    <form action="<?php echo base_url('Expense/submit_btn') ?>" method="post" class="forms">
 
         <div class="forms2">
             <label for="reading" class="form-label">Select Expense</label>

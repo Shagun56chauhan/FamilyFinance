@@ -28,7 +28,7 @@
 
 
 
-    <form action="<?php echo base_url('viewrecord/update') ?>" method="post" class="forms">
+    <form action="<?php echo base_url('ViewRecord/update') ?>" method="post" class="forms">
 
 
 

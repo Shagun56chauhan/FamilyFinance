@@ -379,80 +379,79 @@
 
 
             <div class="table" id="monthly-expense-table">
-                <section class="shopping-cart">
-                    <h1 class="heading" style="color: #2A9D8F;">Monthly Expense Type</h1>
+    <section class="shopping-cart">
+        <h1 class="heading" style="color: #2A9D8F;">Monthly Expense Type</h1>
 
-                    <!-- Month Selection Dropdown -->
-                    <form method="get" action="" class="mb-4">
-                        <select name="month" id="month" onchange="this.form.submit()">
-                            <option value="">-- Select a Month --</option>
-                            <?php
-                            // Loop to generate the month options
-                            for ($i = 0; $i < 12; $i++) {
-                                // Format month as 'Y-m' (e.g., '2025-01' for January 2025)
-                                $month_value = date('Y-m', strtotime("-$i months"));
-                                // Extract the month name
-                                $month_name = date('F', strtotime($month_value));
-                                // Check if the current option is selected
-                                $selected = ($month_value === $selected_month) ? 'selected' : '';
-                                echo "<option value='$month_value' $selected>$month_name</option>";
-                            }
+        <!-- Year and Month Selection Dropdown -->
+        <form method="get" action="" class="mb-4">
+            <select name="year" id="year" onchange="this.form.submit()">
+                <option value="">-- Select a Year --</option>
+                <?php
+                // Generate year options dynamically (last 5 years + current year)
+                for ($year = date('Y'); $year >= date('Y') - 5; $year--) {
+                    $selected = ($year == $selected_year) ? 'selected' : '';
+                    echo "<option value='$year' $selected>$year</option>";
+                }
+                ?>
+            </select>
 
+            <select name="month" id="month" onchange="this.form.submit()">
+                <option value="">-- Select a Month --</option>
+                <?php
+                foreach ($months as $key => $name) {
+                    $selected = ($key == $selected_month) ? 'selected' : '';
+                    echo "<option value='$key' $selected>$name</option>";
+                }
+                ?>
+            </select>
+        </form>
+
+        <!-- Show selected year and month -->
+        <?php if ($selected_year && $selected_month): ?>
+            <p style="font-size:18px;">
+                <strong>Selected Period: </strong>
+                <?php echo $months[$selected_month] . " " . $selected_year; ?>
+            </p>
+        <?php endif; ?>
+
+        <!-- Show table only if year and month are selected -->
+        <?php if ($selected_year && $selected_month && !empty($month_types)): ?>
+            <div class="user">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Expense Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $totalAmount = 0;
+                        foreach ($month_types as $expense):
+                            $totalAmount += $expense['amount'];
                             ?>
-                        </select>
-                    </form>
-
-                    <!-- Show selected month name -->
-                    <?php if ($selected_month): ?>
-                        <p style="font-size:18px;">
-                            <strong>Selected Month: </strong>
-                            <?php
-                            // Ensure selected_month is correctly formatted
-                            $month_name = date('F', mktime(0, 0, 0, intval($selected_month), 1));
-                            echo $month_name;
-                            ?>
-                        </p>
-                    <?php endif; ?>
-
-
-
-                    <!-- Show table only if a month is selected -->
-                    <?php if ($selected_month && !empty($month_types)): ?>
-                        <div class="user">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Expense Type</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    $totalAmount = 0;
-                                    foreach ($month_types as $expense):
-                                        $totalAmount += $expense['amount'];
-                                        ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($expense['type']); ?></td>
-                                            <td><?php echo number_format($expense['amount'], 2); ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th style="font-size:20px;">TOTAL</th>
-                                        <th style="font-size:20px;">
-                                            <?php echo number_format($totalAmount, 2); ?>
-                                        </th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    <?php elseif ($selected_month): ?>
-                        <p>No expenses found for the selected month.</p>
-                    <?php endif; ?>
-                </section>
+                            <tr>
+                                <td><?php echo htmlspecialchars($expense['type']); ?></td>
+                                <td><?php echo number_format($expense['amount'], 2); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="font-size:20px;">TOTAL</th>
+                            <th style="font-size:20px;">
+                                <?php echo number_format($totalAmount, 2); ?>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
+        <?php elseif ($selected_year && $selected_month): ?>
+            <p>No expenses found for the selected period.</p>
+        <?php endif; ?>
+    </section>
+</div>
+
         </div>
 
     </div>

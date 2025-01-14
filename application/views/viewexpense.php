@@ -93,10 +93,10 @@
                             <td style="color:  red;">₹<?= $view['amount']; ?></td>
                             <td><?= $view['created_at']; ?></td>
                             <td><?= $view['remarks']; ?></td>
-                            <td> <a href="<?php echo base_url('expense/edit/') . $view['id']; ?>"
+                            <td> <a href="<?php echo base_url('Expense/edit/') . $view['id']; ?>"
                                     class="btn btn-info btns">Edit</a>
                                 &nbsp;
-                                <a href="<?php echo base_url('expense/delete/') . $view['id']; ?>"
+                                <a href="<?php echo base_url('Expense/delete/') . $view['id']; ?>"
                                     class="btn btn-danger btns"
                                     onclick="return confirm('Are you sure you want to delete this?')">
                                     Delete

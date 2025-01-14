@@ -32,7 +32,7 @@
        
 
     </div>
-    <form action="<?php echo base_url('addrecord/submit_btn') ?>" method="post" class="forms">
+    <form action="<?php echo base_url('AddRecord/submit_btn') ?>" method="post" class="forms">
         <div class="forms2">
         <label for="reading" class="form-label">Select Vehicle</label>
             <div class="mb-7">           

@@ -22,7 +22,7 @@
         </div>
     <?php endif; ?>
 
-    <form action="<?php echo base_url('signup/submit_btn') ?>" method="post" class="forms">
+    <form action="<?php echo base_url('Signup/submit_btn') ?>" method="post" class="forms">
         <div class="forms2">
             <h2>SIGN UP</h2>
            
