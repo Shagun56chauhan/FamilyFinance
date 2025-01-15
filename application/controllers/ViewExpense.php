@@ -8,7 +8,7 @@ Class ViewExpense extends CI_Controller{
         parent::__construct();
           // Check if the user is logged in before accessing the page
           if (!$this->session->userdata('user_id')) {
-            redirect('auth'); // Redirect to login page if not logged in
+            redirect('Auth'); // Redirect to login page if not logged in
         }
         $this->load->model("ViewExpenseModel");
         $this->load->library('session');
@@ -34,7 +34,7 @@ Class ViewExpense extends CI_Controller{
 
          $selected_type = $this->input->post('type');
          
-        $data['expense_types'] = $this->ViewExpenseModel->getUniqueExpenseTypes($user_id);
+        $data['expense_types'] = $this->ViewExpenseModel->getUniqueExpenseTypes();
        
 
 

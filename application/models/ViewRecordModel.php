@@ -49,11 +49,10 @@ public function deleteExpense($id) {
 
 // dropdown
     // Get all vehicle types (if you want to list available types)
-    public function getVehicleTypes($user_id)
+    public function getVehicleTypes()
     {
         $this->db->distinct();
         $this->db->select('type');
-        $this->db->where('user_id', $user_id);
         $query = $this->db->get('admin_vehicle');
         return $query->result_array();
     }

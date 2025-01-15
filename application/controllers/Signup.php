@@ -39,12 +39,12 @@ class Signup extends CI_Controller
         // Input validation
         if (empty($username) || empty($password) || empty($re_password) || empty($name)) {
             $this->session->set_flashdata('message', 'All fields are required!');
-            redirect('signup');
+            redirect('Signup');
         }
 
         if ($password !== $re_password) {
             $this->session->set_flashdata('message', 'Password do not match!');
-            redirect('signup');
+            redirect('Signup');
         }
 
          // Check if username is already taken
@@ -57,7 +57,7 @@ class Signup extends CI_Controller
             $this->session->set_flashdata('message', 'You have Successfully registred!');
         }
 
-        redirect('auth');
+        redirect('Auth');
 
     }
 

@@ -8,7 +8,7 @@ Class ViewRecord extends CI_Controller{
         parent::__construct();
           // Check if the user is logged in before accessing the page
           if (!$this->session->userdata('user_id')) {
-            redirect('auth'); // Redirect to login page if not logged in
+            redirect('Auth'); // Redirect to login page if not logged in
         }
         $this->load->model("ViewRecordModel");
         $this->load->library('session');
@@ -25,7 +25,7 @@ Class ViewRecord extends CI_Controller{
 
         // table 2
 
-        $data['record_types'] = $this->ViewRecordModel->getVehicleTypes($user_id); // Keep the vehicle types for the dropdown
+        $data['record_types'] = $this->ViewRecordModel->getVehicleTypes(); // Keep the vehicle types for the dropdown
        
        
 
@@ -55,7 +55,7 @@ Class ViewRecord extends CI_Controller{
 public function delete($id) {
     $this->ViewRecordModel->deleteExpense($id); // Call the delete function
     $this->session->set_flashdata('message', 'Expense deleted successfully!');
-    redirect('viewrecord'); // Redirect to the view orders page
+    redirect('ViewRecord'); // Redirect to the view orders page
 }
 
 
@@ -71,7 +71,7 @@ public function edit($id) {
         $this->load->view('viewedit', $data);
     } else {
         $this->session->set_flashdata('message', 'Expense not found.');
-        redirect('addrecord/index');  // Redirect if data not found
+        redirect('AddRecord/index');  // Redirect if data not found
     }
 }
 
@@ -92,7 +92,7 @@ public function update() {
         $this->session->set_flashdata('message', 'Failed to update Record.');
     }
 
-    redirect('viewrecord/edit/' . $id);  // Redirect back to the edit form
+    redirect('ViewRecord/edit/' . $id);  // Redirect back to the edit form
 }
 
 

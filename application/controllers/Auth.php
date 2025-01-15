@@ -22,7 +22,7 @@ class Auth extends CI_Controller
     public function index()
     {
         $data['auth'] = $this->AuthModel->getUsers();
-        $this->load->view("auth", $data);
+        $this->load->view("Auth", $data);
 
         if ($this->session->flashdata('message')) {
             $data['message'] = $this->session->flashdata('message');
@@ -37,13 +37,13 @@ class Auth extends CI_Controller
         // Validate input
         if (empty($name)) {
             $this->session->set_flashdata('message', 'User Name is required');
-            redirect('auth');
+            redirect('Auth');
         } elseif (empty($password)) {
             $this->session->set_flashdata('message', 'Password is required');
-            redirect('auth');
+            redirect('Auth');
         } elseif (strlen($password) < 6) {
             $this->session->set_flashdata('message', 'Password must be at least 6 characters');
-            redirect('auth');
+            redirect('Auth');
         } else{
              // Check if the user exists
              $user = $this->AuthModel->getUserByName($name);
@@ -53,10 +53,10 @@ class Auth extends CI_Controller
             $this->session->set_userdata('user_id', $user['id']); // Store user ID
             $this->session->set_userdata('name', $name); // Store username in session
             $this->session->set_flashdata('message', 'You have successfully logged in!');
-            redirect('totalexpense');
+            redirect('TotalExpense');
         } else {
             $this->session->set_flashdata('message', 'Invalid username or password');
-            redirect('auth');
+            redirect('Auth');
         }
            
                  
@@ -67,6 +67,6 @@ class Auth extends CI_Controller
     public function logout()
     {
         $this->session->sess_destroy();
-        redirect('auth'); // Redirect to login page
+        redirect('Auth'); // Redirect to login page
     }
 }

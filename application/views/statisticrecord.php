@@ -296,7 +296,7 @@
             <div class="table" id="total-expense-table">
 
                 <section class="shopping-cart">
-                    <h1 class="heading" style="color:  #2A9D8F;">Record Type</h1>
+                    <h1 class="heading" style="color:  #2A9D8F;">Total Vehicle Log</h1>
 
 
                     <div class="user">
@@ -344,72 +344,83 @@
 
             <div class="table" id="monthly-expense-table">
                 <section class="shopping-cart">
-                    <h1 class="heading" style="color: #2A9D8F;">Monthly Record Type</h1>
+                    <h1 class="heading" style="color: #2A9D8F;">Monthly Vehicle Log</h1>
 
-                    <!-- Month Selection Dropdown -->
-                    <form method="get" action="" class="mb-4">
-                        <select name="month" id="month" onchange="this.form.submit()">
+                    <!-- Year and Month Selection Dropdown -->
+                    <form method="get" action="" class="form-inline" style="display: flex; gap: 20px; align-items: center;">
+                        <select name="year" id="year" onchange="this.form.submit()" class="dropdown1">
+                            <option value="">-- Select a Year --</option>
+                            <?php
+                            for ($year = date('Y'); $year >= date('Y') - 5; $year--) {
+                                $selected = ($year == $selected_year) ? 'selected' : '';
+                                echo "<option value='$year' $selected>$year</option>";
+                            }
+                            ?>
+                        </select>
+
+                        
+                        <select name="month" id="month" onchange="this.form.submit()" class="dropdown1">
+                           
                             <option value="">-- Select a Month --</option>
                             <?php
-                            // Loop to generate the month options
                             foreach ($months as $month_num => $month_name) {
-                                // Check if the current option is selected
                                 $selected = ($month_num == $selected_month) ? 'selected' : '';
-                                echo "<option value='" . date('Y') . '-' . str_pad($month_num, 2, '0', STR_PAD_LEFT) . "' $selected>$month_name</option>";
+                                echo "<option value='$month_num' $selected>$month_name</option>";
                             }
                             ?>
                         </select>
                     </form>
 
-                    <!-- Show selected month name -->
-                    <?php if ($selected_month): ?>
+                    <!-- Show selected year and month -->
+                    <?php if ($selected_year && $selected_month): ?>
                         <p style="font-size:18px;">
-                            <strong>Selected Month: </strong>
-                            <?php
-                            // Ensure selected_month is correctly formatted
-                            $month_name = $months[(int) $selected_month];
-                            echo $month_name . ' ' . date('Y');
-                            ?>
+                            <strong>Selected Period: </strong>
+                            <?php echo $months[(int) $selected_month] . ' ' . $selected_year; ?>
                         </p>
                     <?php endif; ?>
 
-                    <!-- Show table only if a month is selected -->
-                    <?php if ($selected_month && !empty($month_types)): ?>
+                    <!-- Show table only if year and month are selected -->
+                    <?php if ($selected_year && $selected_month && !empty($month_types)): ?>
                         <div class="user">
-                            <table class="table">
+                            <table class="table" style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr>
-                                        <th>Vehicle Type</th>
-                                        <th>Total Distance (km)</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Vehicle Type
+                                        </th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Total Distance
+                                            (km)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $grandTotalDistance = 0; // Initialize total distance
+                                    $grandTotalDistance = 0;
                                     foreach ($month_types as $record):
-                                        $grandTotalDistance += $record['total_distance']; // Accumulate the total distance
+                                        $grandTotalDistance += $record['total_distance'];
                                         ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($record['type']); ?></td>
-                                            <td><?php echo number_format($record['total_distance'], 2); ?> km</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                <?php echo htmlspecialchars($record['type']); ?></td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">
+                                                <?php echo number_format($record['total_distance'], 2); ?> km</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Total Distance</th>
-                                        <th>
+                                        <th style="border: 1px solid #ddd; padding: 8px;">Total Distance</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px;">
                                             <?php echo number_format($grandTotalDistance, 2); ?> km
                                         </th>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
-                    <?php elseif ($selected_month): ?>
-                        <p>No record found for the selected month.</p>
+                    <?php elseif ($selected_year && $selected_month): ?>
+                        <p>No record found for the selected period.</p>
                     <?php endif; ?>
                 </section>
             </div>
+
         </div>
     </div>
 

@@ -13,7 +13,7 @@ class AddRecord extends CI_Controller
         parent::__construct();
           // Check if the user is logged in before accessing the page
           if (!$this->session->userdata('user_id')) {
-            redirect('auth'); // Redirect to login page if not logged in
+            redirect('Auth'); // Redirect to login page if not logged in
         }
         $this->load->model("AddRecordModel");
         $this->load->library('session');
@@ -52,7 +52,7 @@ class AddRecord extends CI_Controller
  if (empty($user_id) || empty($type) || empty($reading) || empty($date)) {
     // Set an error message if any required field is missing
     $this->session->set_flashdata('message', 'Please fill out all required fields.');
-    redirect('addrecord');
+    redirect('AddRecord');
     return;  // Stop further execution if validation fails
 }
 
@@ -63,7 +63,7 @@ $last_reading = $this->AddRecordModel->getLastReading($user_id, $type);
 if ($last_reading !== null && $reading <= $last_reading) {
     // Set an error message if the new reading is not greater
     $this->session->set_flashdata('message', 'Error: The new reading must be greater than the previous reading (' . $last_reading . ' km).');
-    redirect('addrecord');
+    redirect('AddRecord');
     return;  // Stop further execution if validation fails
     
 }
@@ -73,7 +73,7 @@ $this->AddRecordModel->submit_btn($user_id, $type, $reading, $date, $remarks);
 $this->session->set_flashdata('message', 'Your Item Successfully Added!');
 
 // Redirect back to the add record page
-redirect('addrecord');
+redirect('AddRecord');
 }
 
    

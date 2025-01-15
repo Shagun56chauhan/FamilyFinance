@@ -5,14 +5,14 @@
             <div class="hover dropdown">
                 <a href="#" class="dropdown-toggle">Expense</a>
                 <div class="dropdown-content">
-                    <a href="<?php echo base_url('expense'); ?>" id="shagu">Add Expense</a>
-                    <a href="<?php echo base_url('viewexpense'); ?>" id="shagu">View Expense</a>
-                    <a href="<?php echo base_url('totalexpense'); ?>" id="shagu">Statistics</a>
+                    <a href="<?php echo base_url('Expense'); ?>" id="shagu">Add Expense</a>
+                    <a href="<?php echo base_url('ViewExpense'); ?>" id="shagu">View Expense</a>
+                    <a href="<?php echo base_url('TotalExpense'); ?>" id="shagu">Statistics</a>
                 </div>
             </div>
 
             <div class="hover dropdown">
-            <a href="<?php echo base_url('auth'); ?>" id="login_btn" style="display: none;">LOG IN</a>
+            <a href="<?php echo base_url('Auth'); ?>" id="login_btn" style="display: none;">LOG IN</a>
                 <div class="dropdown-content">
                     <a href="<?php echo base_url('Auth/logout'); ?>" id="log_out">LOG OUT</a>
                 </div>
@@ -21,9 +21,9 @@
             <div class="hover dropdown">
                 <a href="#" class="dropdown-toggle">Vehicle Log</a>
                 <div class="dropdown-content">
-                    <a href="<?php echo base_url('addrecord'); ?>" id="shagu">Add Record</a>
-                    <a href="<?php echo base_url('viewrecord'); ?>" id="shagu">View Records</a>
-                    <a href="<?php echo base_url('statisticrecord'); ?>" id="shagu">Statistics</a>
+                    <a href="<?php echo base_url('AddRecord'); ?>" id="shagu">Add Record</a>
+                    <a href="<?php echo base_url('ViewRecord'); ?>" id="shagu">View Records</a>
+                    <a href="<?php echo base_url('StatisticRecord'); ?>" id="shagu">Statistics</a>
                 </div>
             </div>
         </nav>

@@ -37,7 +37,7 @@
     <input type="password" name="password" placeholder="Password" id="password" required><br>
 
     <button type="submit"id="sub_btn" name="login">Login</button>
-    <a href="<?php echo base_url('signup')?>"class="ca">Create an account</a>
+    <a href="<?php echo base_url('Signup')?>"class="ca">Create an account</a>
     </div>
 </form>
 

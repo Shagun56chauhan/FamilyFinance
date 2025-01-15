@@ -41,7 +41,7 @@
         <input type="password" name="re_password" placeholder="Re-enter your password" required><br>
 
         <button type="submit">Sign Up</button>
-                <a href="<?php echo base_url('auth'); ?>" class="ca">Already have an account?</a>
+                <a href="<?php echo base_url('Auth'); ?>" class="ca">Already have an account?</a>
         </div>
     </form>
 </body>

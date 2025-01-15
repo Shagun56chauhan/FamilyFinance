@@ -13,7 +13,7 @@ class Expense extends CI_Controller
         parent::__construct();
          // Check if the user is logged in before accessing the page
         if (!$this->session->userdata('user_id')) {
-            redirect('auth'); // Redirect to login page if not logged in
+            redirect('Auth'); // Redirect to login page if not logged in
         }
         $this->load->model("ExpenseModel");
         $this->load->library('session');
@@ -31,7 +31,7 @@ class Expense extends CI_Controller
           $user_id = $this->session->userdata('user_id');
 
       
-        $data['expense_types'] = $this->ExpenseModel->getUniqueExpenseTypes($user_id);
+        $data['expense_types'] = $this->ExpenseModel->getUniqueExpenseTypes();
 
       
         $this->load->view("expense", $data);
@@ -64,7 +64,7 @@ class Expense extends CI_Controller
 
 
 
-        redirect('expense');
+        redirect('Expense');
 
     }
 
@@ -76,7 +76,7 @@ class Expense extends CI_Controller
 public function delete($id) {
     $this->ExpenseModel->deleteExpense($id); // Call the delete function
     $this->session->set_flashdata('message', 'Expense deleted successfully!');
-    redirect('viewexpense'); // Redirect to the view orders page
+    redirect('ViewExpense'); // Redirect to the view orders page
 }
 
 
@@ -92,7 +92,7 @@ public function edit($id) {
         $this->load->view('edit', $data);
     } else {
         $this->session->set_flashdata('message', 'Expense not found.');
-        redirect('expense/index');  // Redirect if data not found
+        redirect('Expense/index');  // Redirect if data not found
     }
 }
 
@@ -113,7 +113,7 @@ public function update() {
         $this->session->set_flashdata('message', 'Failed to update expense.');
     }
 
-    redirect('expense/edit/' . $id);  // Redirect back to the edit form
+    redirect('Expense/edit/' . $id);  // Redirect back to the edit form
 }
 
 

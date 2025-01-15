@@ -94,7 +94,7 @@ section{
 
 .heading{
     text-align: center;
-    font-size: 3.5rem;
+    font-size: 2.4rem;
     text-transform: uppercase;
     color: var(--black);
     margin-bottom: 2rem;
@@ -525,6 +525,82 @@ canvas {
 
 
 
+/* monthly expense table */
+
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dropdown-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #264653;
+    margin-bottom: 5px;
+}
+
+.dropdown1 {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #2A9D8F;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    color: #264653;
+    outline: none;
+    cursor: pointer;
+}
+
+.dropdown1:hover {
+    border-color: #1B6E6C;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 2rem;
+    text-align: left;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table th {
+    background-color: #2A9D8F;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+}
+
+.styled-table td {
+    padding: 10px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e9f7f6;
+}
+
+.styled-table tfoot th {
+    background-color: #2A9D8F;
+    color: #ffffff;
+}
+
+
+
+/* monthly expense table */
+
 
 
 
@@ -559,22 +635,20 @@ canvas {
     .navbar {
         display: flex;
         flex-direction: column;
-    }
-
-    .header .flex .navbar{
         position: absolute;
-        top:99%;
+        top: 99%;
         left: 0;
         right: 0;
         background-color: #2A9D8F;
         clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-        height: 450px;
+        height: max-content;
         width: 100%;
         transition: all 1s ease;
     }
-    .header .flex .navbar.active{
+    .navbar.active {
         clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
     }
+
     .header .flex .navbar a{
         margin: 2rem;
         display: flex;
@@ -586,6 +660,33 @@ canvas {
     .hover {
         display: flex;
         flex-direction: column;
+        position: relative;
+    }
+
+       /* Dropdown content - Initially hidden */
+       .dropdown-content {
+        display: none;
+        position: relative;
+        background-color: #F0F4F8;
+        width: 80%;
+        margin-left: 30px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        
+    }
+
+    /* When dropdown is open */
+    .dropdown.open .dropdown-content {
+        display: block;
+        
+    }
+
+    .hover.open {
+        /* Keep other elements visible */
+        position: relative;
     }
     .forms2{
         width: 100%;

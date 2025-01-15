@@ -239,20 +239,16 @@ public function getMonthlyVehicleRecords($user_id) {
 
 
  // Function to get expenses by selected month
- public function get_expenses_by_month($selected_month)
+ public function get_vehicle_data_by_month_year($selected_year, $selected_month)
 {
-    // Get the current year to filter data correctly
-    $current_year = date('Y');
-    
-    // Fetch records for the selected month of the current year, ordered by date
+    // Fetch records for the selected year and month, ordered by date
     $query = $this->db->select('type, reading, created_at')
                       ->from('vehicle')
-                      ->where('YEAR(created_at)', $current_year)  // Ensure the correct year is selected
-                      ->where('MONTH(created_at)', $selected_month) // Filter by the selected month
-                      ->order_by('created_at', 'ASC')  // Order by date (ascending) for each vehicle type
+                      ->where('YEAR(created_at)', $selected_year)
+                      ->where('MONTH(created_at)', $selected_month)
+                      ->order_by('created_at', 'ASC')
                       ->get();
 
-    // Fetch the results
     $records = $query->result_array();
 
     $vehicle_readings = [];
@@ -262,25 +258,24 @@ public function getMonthlyVehicleRecords($user_id) {
     foreach ($records as $record) {
         $vehicle_type = $record['type'];
         $reading = $record['reading'];
-        
+
         if (!isset($vehicle_readings[$vehicle_type])) {
             $vehicle_readings[$vehicle_type] = [];
         }
 
-        // Add the reading to the list of readings for this vehicle type
+        // Add the reading to the list for this vehicle type
         $vehicle_readings[$vehicle_type][] = $reading;
     }
 
-    // Now calculate the total distance for each vehicle type
+    // Calculate the total distance for each vehicle type
     foreach ($vehicle_readings as $vehicle_type => $readings) {
         $total_distance = 0;
-        // Calculate distance by subtracting previous reading from the current reading
         for ($i = 1; $i < count($readings); $i++) {
-            $total_distance += ($readings[$i] - $readings[$i - 1]); // Current reading - Previous reading
+            $total_distance += ($readings[$i] - $readings[$i - 1]);
         }
         $total_distances[] = [
             'type' => $vehicle_type,
-            'total_distance' => $total_distance
+            'total_distance' => $total_distance,
         ];
     }
 

@@ -9,7 +9,7 @@ class TotalExpense extends CI_Controller
         parent::__construct();
         // Check if the user is logged in before accessing the page
         if (!$this->session->userdata('user_id')) {
-            redirect('auth'); // Redirect to login page if not logged in
+            redirect('Auth'); // Redirect to login page if not logged in
         }
         $this->load->model("TotalExpenseModel");
         $this->load->library('session');

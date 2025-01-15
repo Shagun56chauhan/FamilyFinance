@@ -32,10 +32,10 @@ class ExpenseModel extends CI_Model
 
     }
  // Method to get unique expense types for a user
- function getUniqueExpenseTypes($user_id) {
+ function getUniqueExpenseTypes() {
     $this->db->select('type');
     $this->db->distinct();
-    $this->db->where('user_id', $user_id);
+   
     $query = $this->db->get('admin_expense');
     return $query->result_array();
 }
