@@ -22,7 +22,7 @@ class Auth extends CI_Controller
     public function index()
     {
         $data['auth'] = $this->AuthModel->getUsers();
-        $this->load->view("Auth", $data);
+        $this->load->view("auth", $data);
 
         if ($this->session->flashdata('message')) {
             $data['message'] = $this->session->flashdata('message');
