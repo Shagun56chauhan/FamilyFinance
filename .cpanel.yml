@@ -2,6 +2,6 @@
 deployment:
     tasks:
         - export DEPLOYPATH=//home4/skoolfdp/public_html/FamilyFinance/application/
-        - /bin/cp -R  application/ontrollers $DEPLOYPATH
+        - /bin/cp -R  application/controllers $DEPLOYPATH
         - /bin/cp -R  application/models $DEPLOYPATH
         - /bin/cp -R  application/views $DEPLOYPATH
