@@ -126,7 +126,22 @@
                                 'rgba(255, 206, 86, 0.2)',
                                 'rgba(75, 192, 192, 0.2)',
                                 'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 99, 132, 0.3)',
+                                'rgba(54, 162, 235, 0.3)',
+                                'rgba(255, 206, 86, 0.3)',
+                                'rgba(75, 192, 192, 0.3)',
+                                'rgba(153, 102, 255, 0.3)',
+                                'rgba(255, 159, 64, 0.3)',
+                                'rgba(100, 149, 237, 0.2)',  // New color 1
+                                'rgba(255, 105, 180, 0.2)',  // New color 2
+                                'rgba(34, 193, 195, 0.2)',   // New color 3
+                                'rgba(253, 187, 45, 0.2)',   // New color 4
+                                'rgba(243, 156, 18, 0.2)',   // New color 5
+                                'rgba(46, 204, 113, 0.2)',   // New color 6
+                                'rgba(39, 174, 96, 0.2)',    // New color 7
+                                'rgba(142, 68, 173, 0.2)',   // New color 8
+                                'rgba(52, 152, 219, 0.2)'    // New color 9
                             ],
                             borderColor: [
                                 'rgba(255, 99, 132, 1)',
@@ -134,7 +149,22 @@
                                 'rgba(255, 206, 86, 1)',
                                 'rgba(75, 192, 192, 1)',
                                 'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(100, 149, 237, 1)',  // New color 1 border
+                                'rgba(255, 105, 180, 1)',  // New color 2 border
+                                'rgba(34, 193, 195, 1)',   // New color 3 border
+                                'rgba(253, 187, 45, 1)',   // New color 4 border
+                                'rgba(243, 156, 18, 1)',   // New color 5 border
+                                'rgba(46, 204, 113, 1)',   // New color 6 border
+                                'rgba(39, 174, 96, 1)',    // New color 7 border
+                                'rgba(142, 68, 173, 1)',   // New color 8 border
+                                'rgba(52, 152, 219, 1)'    // New color 9 border
                             ],
                             borderWidth: 1
                         }]
@@ -256,7 +286,22 @@
                                 'rgba(255, 206, 86, 0.2)',
                                 'rgba(75, 192, 192, 0.2)',
                                 'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(255, 99, 132, 0.3)',
+                                'rgba(54, 162, 235, 0.3)',
+                                'rgba(255, 206, 86, 0.3)',
+                                'rgba(75, 192, 192, 0.3)',
+                                'rgba(153, 102, 255, 0.3)',
+                                'rgba(255, 159, 64, 0.3)',
+                                'rgba(100, 149, 237, 0.2)',  // New color 1
+                                'rgba(255, 105, 180, 0.2)',  // New color 2
+                                'rgba(34, 193, 195, 0.2)',   // New color 3
+                                'rgba(253, 187, 45, 0.2)',   // New color 4
+                                'rgba(243, 156, 18, 0.2)',   // New color 5
+                                'rgba(46, 204, 113, 0.2)',   // New color 6
+                                'rgba(39, 174, 96, 0.2)',    // New color 7
+                                'rgba(142, 68, 173, 0.2)',   // New color 8
+                                'rgba(52, 152, 219, 0.2)'    // New color 9
                             ],
                             borderColor: [
                                 'rgba(255, 99, 132, 1)',
@@ -264,7 +309,22 @@
                                 'rgba(255, 206, 86, 1)',
                                 'rgba(75, 192, 192, 1)',
                                 'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(100, 149, 237, 1)',  // New color 1 border
+                                'rgba(255, 105, 180, 1)',  // New color 2 border
+                                'rgba(34, 193, 195, 1)',   // New color 3 border
+                                'rgba(253, 187, 45, 1)',   // New color 4 border
+                                'rgba(243, 156, 18, 1)',   // New color 5 border
+                                'rgba(46, 204, 113, 1)',   // New color 6 border
+                                'rgba(39, 174, 96, 1)',    // New color 7 border
+                                'rgba(142, 68, 173, 1)',   // New color 8 border
+                                'rgba(52, 152, 219, 1)'    // New color 9 border
                             ],
                             borderWidth: 1
                         }]
@@ -336,7 +396,7 @@
 
 
                     <div class="user">
-                        <table class="table">
+                        <table class="styled-table">
                             <thead>
                                 <tr>
                                     <th>Expense Type</th>

@@ -300,7 +300,7 @@
 
 
                     <div class="user">
-                        <table class="table">
+                        <table class="styled-table">
                             <thead>
                                 <tr>
                                     <th>Vehicle Type</th>
@@ -369,7 +369,7 @@
                             }
                             ?>
                         </select>
-                    </form>
+                    </form>        
 
                     <!-- Show selected year and month -->
                     <?php if ($selected_year && $selected_month): ?>

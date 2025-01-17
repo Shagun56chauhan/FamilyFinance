@@ -239,11 +239,12 @@ public function getMonthlyVehicleRecords($user_id) {
 
 
  // Function to get expenses by selected month
- public function get_vehicle_data_by_month_year($selected_year, $selected_month)
+ public function get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id)
 {
     // Fetch records for the selected year and month, ordered by date
     $query = $this->db->select('type, reading, created_at')
                       ->from('vehicle')
+                      ->where('user_id', $user_id) // Filter by user ID
                       ->where('YEAR(created_at)', $selected_year)
                       ->where('MONTH(created_at)', $selected_month)
                       ->order_by('created_at', 'ASC')

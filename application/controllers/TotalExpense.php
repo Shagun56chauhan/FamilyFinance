@@ -31,8 +31,8 @@ class TotalExpense extends CI_Controller
         $selected_month = $this->input->get('month');
 
         // Fetch expense data if year and month are selected, otherwise set to an empty array
-        $data['month_types'] = ($selected_year && $selected_month)
-            ? $this->TotalExpenseModel->get_expenses_by_year_month($selected_year, $selected_month)
+        $data['month_types'] = ($selected_year && $selected_month && $user_id)
+            ? $this->TotalExpenseModel->get_expenses_by_year_month($selected_year, $selected_month, $user_id)
             : [];
 
         $data['selected_year'] = $selected_year;

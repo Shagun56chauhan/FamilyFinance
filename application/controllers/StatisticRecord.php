@@ -40,8 +40,8 @@ $selected_year = $this->input->get('year');
 $selected_month = $this->input->get('month');
 
 // Fetch vehicle log data based on selected year and month
-$data['month_types'] = ($selected_year && $selected_month) ? 
-    $this->StatisticRecordModel->get_vehicle_data_by_month_year($selected_year, $selected_month) : [];
+$data['month_types'] = ($selected_year && $selected_month && $user_id) ? 
+    $this->StatisticRecordModel->get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id) : [];
 
 $data['selected_year'] = $selected_year;
 $data['selected_month'] = $selected_month;
