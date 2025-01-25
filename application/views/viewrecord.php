@@ -13,6 +13,8 @@
     <!-- custom css file link -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>">
     <link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet">
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 </head>
 
 <body>
@@ -68,33 +70,31 @@
 
 
             <div class="user">
-                <table class="table">
-
+                <table id="recordTable" class="display">
                     <thead>
-                        <th>id</th>
-                        <th>Vehicle Type</th>
-                        <th>Reading</th>
-                        <th>Date</th>
-                        <th>Remarks</th>
-                        <th>Action</th>
-
-
-
+                        <tr>
+                            <th>Record ID</th>
+                            <th>Vehicle Type</th>
+                            <th>Reading</th>
+                            <th>Date</th>
+                            <th>Remarks</th>
+                            <th>Action</th>
+                        </tr>
                     </thead>
 
                     <tbody>
                         <?php if (!empty($records)): ?>
-                            <?php foreach ($records as $records): ?>
+                            <?php foreach ($records as $record): ?>
                                 <tr>
-                                    <td><?= $records['user_id']; ?></td>
-                                    <td><?= $records['type']; ?></td>
-                                    <td><?= $records['reading']; ?></td>
-                                    <td><?= $records['created_at']; ?></td>
-                                    <td><?= $records['remarks']; ?></td>
-                                    <td> <a href="<?php echo base_url('ViewRecord/edit/') . $records['id']; ?>"
+                                    <td><?= $record['id']; ?></td>
+                                    <td><?= $record['type']; ?></td>
+                                    <td><?= $record['reading']; ?></td>
+                                    <td><?= $record['created_at']; ?></td>
+                                    <td><?= $record['remarks']; ?></td>
+                                    <td> <a href="<?php echo base_url('ViewRecord/edit/') . $record['id']; ?>"
                                             class="btn btn-info btns">Edit</a>
                                         &nbsp;
-                                        <a href="<?php echo base_url('ViewRecord/delete/') . $records['id']; ?>"
+                                        <a href="<?php echo base_url('ViewRecord/delete/') . $record['id']; ?>"
                                             class="btn btn-danger btns"
                                             onclick="return confirm('Are you sure you want to delete this?')">
                                             Delete
@@ -104,7 +104,7 @@
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="14">No views found.</td>
+                                <td colspan="6">No views found.</td>
                             </tr>
                         <?php endif; ?>
 
@@ -154,10 +154,14 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <!-- Include jQuery and DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
     <script>
         $(document).ready(function () {
             $('.table').DataTable();
+            $('#recordTable').DataTable();
         });
     </script>
 

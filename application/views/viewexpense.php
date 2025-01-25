@@ -13,6 +13,8 @@
     <!-- custom css file link -->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css'); ?>">
     <link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet">
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 </head>
 
 <body>
@@ -69,25 +71,22 @@
 
     </div>
     <div class="user">
-        <table>
-
+        <table id="expenseTable" class="display">
             <thead>
-                <th>id</th>
-                <th>Expense Type</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Remarks</th>
-                <th>Action</th>
-
-
-
+                <tr>
+                    <th>Expense ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Created At</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
-
             <tbody>
                 <?php if (!empty($view)): ?>
                     <?php foreach ($view as $view): ?>
                         <tr>
-                            <td><?= $view['user_id']; ?></td>
+                            <td><?= $view['id']; ?></td>
                             <input type="hidden" name="type" value="<?= $view['type']; ?>">
                             <td><?= $view['type']; ?></td>
                             <td style="color:  red;">₹<?= $view['amount']; ?></td>
@@ -106,11 +105,9 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5">No records found please selected expense type.</td>
+                        <td colspan="6">No records found please selected expense type.</td>
                     </tr>
                 <?php endif; ?>
-
-
             </tbody>
         </table>
     </div>
@@ -169,10 +166,13 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <!-- Include jQuery and DataTables JS -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
     <script>
         $(document).ready(function () {
-            $('.table').DataTable();
+            $('#expenseTable').DataTable();
         });
     </script>
 
