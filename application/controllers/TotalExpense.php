@@ -27,8 +27,14 @@ class TotalExpense extends CI_Controller
         // table for per month expense
         // Get selected month from the dropdown
         // Get selected year and month from the dropdown
-        $selected_year = $this->input->get('year');
-        $selected_month = $this->input->get('month');
+        // Get selected year and month from the dropdown
+   // Get selected year and month from the dropdown
+$selected_year = !empty($this->input->get('year')) ? $this->input->get('year') : date('Y');
+
+// Ensure the month is always two digits (e.g., '02' instead of '2')
+$selected_month = !empty($this->input->get('month')) ? str_pad($this->input->get('month'), 2, '0', STR_PAD_LEFT) : date('m');
+
+
 
         // Fetch expense data if year and month are selected, otherwise set to an empty array
         $data['month_types'] = ($selected_year && $selected_month && $user_id)
@@ -40,18 +46,18 @@ class TotalExpense extends CI_Controller
 
         // List of month names for the dropdown
         $data['months'] = [
-            1 => 'January',
-            2 => 'February',
-            3 => 'March',
-            4 => 'April',
-            5 => 'May',
-            6 => 'June',
-            7 => 'July',
-            8 => 'August',
-            9 => 'September',
-            10 => 'October',
-            11 => 'November',
-            12 => 'December',
+            '01' => 'January',
+            '02' => 'February',
+            '03' => 'March',
+            '04' => 'April',
+            '05' => 'May',
+            '06' => 'June',
+            '07' => 'July',
+            '08' => 'August',
+            '09' => 'September',
+            '10' => 'October',
+            '11' => 'November',
+            '12' => 'December'
         ];
 
         //    table for per monh expense
@@ -80,6 +86,11 @@ class TotalExpense extends CI_Controller
 
         // pie
 
+        // table
+
+        $data['table_types'] = $this->TotalExpenseModel->get_monthly_types($user_id);
+        // table
+
         // second pie
         $data['pietypes'] = $this->TotalExpenseModel->get_pietypes($user_id);
 
@@ -88,16 +99,18 @@ class TotalExpense extends CI_Controller
 
         // line chart
 
-        // Get the first and last date of the current month
-        $startDate = date('Y-m-01'); // First day of the current month
-        $endDate = date('Y-m-t'); // Last day of the current month
+       
 
-        // Get monthly expenses for the current month
-        $monthlyExpenses = $this->TotalExpenseModel->getMonthlyExpenses($user_id, $startDate, $endDate);
+        // Get data for the monthly chart
+    $monthlyExpenses = $this->TotalExpenseModel->getExpenses($user_id, 'monthly');
+    $data['monthly_expenses'] = $this->prepareChartData($monthlyExpenses, 'monthly');
 
-        // Prepare the monthly data for the chart
-        $data['monthly_expenses'] = $this->prepareMonthlyData($monthlyExpenses);
+    // Get data for the yearly chart
+    $yearlyExpenses = $this->TotalExpenseModel->getExpenses($user_id, 'yearly');
+    $data['yearly_expenses'] = $this->prepareChartData($yearlyExpenses, 'yearly');
 
+
+        
 
         // line chart
 
@@ -143,39 +156,103 @@ class TotalExpense extends CI_Controller
 
 
     // Helper function to structure monthly data for Chart.js
-    private function prepareMonthlyData($monthlyExpenses)
-    {
-        $monthlyData = [
-            'labels' => [],  // Store all dates of the current month
-            'amounts' => []  // Store total amounts for each date, defaulting to zero
+   // Function to prepare data for charts
+   private function prepareChartData($expenses, $type) {
+    $chartData = [
+        'labels' => [],
+        'amounts' => []
+    ];
+
+    if ($type === 'monthly') {
+        $daysInMonth = date('t');
+        $currentMonth = date('Y-m');
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $date = sprintf("%02d", $day); // Format: 01, 02, 03...
+            $chartData['labels'][] = $date;
+            $chartData['amounts'][$date] = 0;
+        }
+    } elseif ($type === 'yearly') {
+        $months = [
+            "01" => "Jan", "02" => "Feb", "03" => "Mar", "04" => "Apr",
+            "05" => "May", "06" => "Jun", "07" => "Jul", "08" => "Aug",
+            "09" => "Sep", "10" => "Oct", "11" => "Nov", "12" => "Dec"
         ];
 
-        $currentMonth = date('Y-m'); // Get the current month in "YYYY-MM" format
-        $daysInMonth = date('t');    // Total days in the current month
-
-        // Generate all dates for the current month
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = sprintf("%s-%02d", $currentMonth, $day); // Format: "YYYY-MM-DD"
-            $monthlyData['labels'][] = $date;
-            $monthlyData['amounts'][$date] = 0; // Initialize each date's amount to zero
+        foreach ($months as $num => $monthName) {
+            $chartData['labels'][] = $monthName;
+            $chartData['amounts'][$num] = 0;
         }
-
-        // Accumulate the amounts from the provided expenses
-        foreach ($monthlyExpenses as $expense) {
-            $date = $expense['date'];  // Example: "2024-11-01"
-            $amount = (float) $expense['amount'];
-
-            // Sum the amounts for the matching date
-            if (isset($monthlyData['amounts'][$date])) {
-                $monthlyData['amounts'][$date] += $amount;
-            }
-        }
-
-        // Convert the associative 'amounts' array to a sequential array for the chart
-        $monthlyData['amounts'] = array_values($monthlyData['amounts']);
-
-        return $monthlyData;
     }
+
+    foreach ($expenses as $expense) {
+        if ($type === 'monthly') {
+            $date = date('d', strtotime($expense['date'])); // Extract day only
+        } else {
+            $date = date('m', strtotime($expense['date'])); // Extract month number
+        }
+
+        $amount = (float) $expense['amount'];
+
+        if (isset($chartData['amounts'][$date])) {
+            $chartData['amounts'][$date] += $amount;
+        }
+    }
+
+    $chartData['amounts'] = array_values($chartData['amounts']);
+    return $chartData;
+}
+
+
+
+// monthly table
+public function getMonthlyExpenses()
+{
+    $user_id = $this->session->userdata('user_id');
+    $selected_year = $this->input->get('year');
+    $selected_month = $this->input->get('month');
+
+    // Fetch expense data if year and month are selected, otherwise set to an empty array
+    $month_types = ($selected_year && $selected_month && $user_id)
+        ? $this->TotalExpenseModel->get_expenses_by_year_month($selected_year, $selected_month, $user_id)
+        : [];
+
+    $totalAmount = 0;
+    ob_start();
+    if (!empty($month_types)) {
+        echo '<div class="user">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Expense Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        foreach ($month_types as $expense) {
+            $totalAmount += $expense['amount'];
+            echo '<tr>
+                    <td>' . htmlspecialchars($expense['type']) . '</td>
+                    <td>' . number_format($expense['amount'], 2) . '</td>
+                </tr>';
+        }
+        echo '</tbody>
+                <tfoot>
+                    <tr>
+                        <th style="font-size:20px;">TOTAL</th>
+                        <th style="font-size:20px;">' . number_format($totalAmount, 2) . '</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>';
+    } else {
+        echo '<p style="text-align: center;">No expenses found for the selected period.</p>';
+    }
+    $html = ob_get_clean();
+    echo $html;
+}
+
+// monthly table
 
 
 }

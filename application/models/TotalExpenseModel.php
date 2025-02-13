@@ -51,18 +51,28 @@ public function getWeeklyExpenses($user_id) {
 
 
   // Fetch daily expenses for multiple months
-  public function getMonthlyExpenses($user_id, $startDate, $endDate) {
+  public function getExpenses($user_id, $type) {
+    if ($type === 'monthly') {
+        $startDate = date('Y-m-01'); // Start of the current month
+        $endDate = date('Y-m-t');    // End of the current month
+    } elseif ($type === 'yearly') {
+        $startDate = date('Y-01-01'); // Start of the current year
+        $endDate = date('Y-12-31');   // End of the current year
+    }
+
     $query = $this->db->query("
         SELECT 
-            amount,type,
+            amount,
             DATE_FORMAT(created_at, '%Y-%m-%d') as date
         FROM expense
         WHERE user_id = ? 
         AND DATE(created_at) BETWEEN ? AND ?
         ORDER BY created_at ASC
     ", [$user_id, $startDate, $endDate]);
+
     return $query->result_array();
 }
+
 
 
 
@@ -73,6 +83,7 @@ public function get_types( $user_id) {
     $this->db->where('user_id', $user_id);
     $this->db->group_by('type');
     $this->db->order_by('type'); // Order by type for clarity
+    
     $query = $this->db->get('expense'); // Assuming 'expenses' is your table name
 
     return $query->result_array();
@@ -80,7 +91,22 @@ public function get_types( $user_id) {
 
 // pie chart
 
+// table
 
+public function get_monthly_types( $user_id) {
+    // Query to fetch the expense type and the created_at (date of expense)
+    $this->db->select('type, SUM(amount) as amount');
+    $this->db->where('user_id', $user_id);
+    $this->db->group_by('type');
+    // Sort by amount in descending order for table display
+    $this->db->order_by('amount', 'DESC'); // Order by amount in descending for table data
+    
+    
+    $query = $this->db->get('expense'); // Assuming 'expenses' is your table name
+
+    return $query->result_array();
+}
+// table
 
  // Function to get expenses by selected month
  public function get_expenses_by_year_month($year, $month, $user_id)
@@ -92,10 +118,13 @@ public function get_types( $user_id) {
                       ->where('YEAR(created_at)', $year) // Filter by year
                       ->where('MONTH(created_at)', $month) // Filter by month
                       ->group_by('type') // Group by expense type
+                      ->order_by('amount', 'DESC') // Order by amount in descending order
                       ->get();
     
     return $query->result_array(); // Return result as an array
 }
+
+
 
 
 
@@ -123,6 +152,12 @@ public function get_pietypes($user_id) {
 
 
 // second pie
+
+
+
+
+
+
 }
 
 

@@ -19,6 +19,10 @@
         integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body>
@@ -32,62 +36,60 @@
         <!-- Top Section with 2 columns -->
 
         <div class="top-section">
-            <div class="chart" id="bar-chart">
 
-                <canvas id="myChart"></canvas>
+            <div class="chart" id="pie-chart">
 
+                <!-- pie chart -->
+                <canvas id="currentMonthPieChart"></canvas>
                 <script>
-                    // Extract data for the chart from the PHP variables
-                    const weeklyLabels = <?php echo json_encode($weekly_records['labels']); ?>;
-                    const weeklyDistance = <?php echo json_encode($weekly_records['distance']); ?>;
-
+                    // Use the current month's data passed from the controller
+                    let currentMonthTypes = <?php echo json_encode($current_month_types); ?>;
+                    let currentMonthDistances = <?php echo json_encode($current_month_distances); ?>;
 
                     // Prepare data for the chart
-                    const chartData = {
-                        labels: weeklyLabels, // 7-day periods on the X-axis
+                    let currentMonthPieChartData = {
+                        labels: currentMonthTypes, // Vehicle types as labels
                         datasets: [{
-                            label: 'Weekly Distance Traveled',
-                            data: weeklyDistance, // Sum of amounts per 7-day period
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar color
-                            borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                            label: 'Total Distance by Vehicle Type (Current Month)',
+                            data: currentMonthDistances, // Distances as data points
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
                             borderWidth: 1
                         }]
                     };
 
-                    const ctx = document.getElementById('myChart').getContext('2d');
-                    const recordChart = new Chart(ctx, {
-                        type: 'bar', // Bar chart type
-                        data: chartData,
+                    // Create the pie chart
+                    let currentMonthPieCtx = document.getElementById('currentMonthPieChart').getContext('2d');
+                    let currentMonthPieChart = new Chart(currentMonthPieCtx, {
+                        type: 'pie', // Pie chart type
+                        data: currentMonthPieChartData,
                         options: {
-                            scales: {
-                                x: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Date Range'
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Distance Traveled (km)'
-                                    }
-                                }
-                            },
                             responsive: true,
                             plugins: {
                                 legend: {
-                                    display: false // Hide legend if not needed
+                                    display: true // Show legend for pie chart
                                 }
                             }
                         }
                     });
                 </script>
 
+
             </div>
-
-
 
 
 
@@ -154,201 +156,250 @@
 
         <!-- Middle Section with 1 column -->
         <div class="top-section">
-            <div class="chart" id="bar-chart">
+            <div class="chart">
+                <!-- Line chart for current month's data -->
+                <canvas id="monthlyLineChart"></canvas>
+            </div>
 
-                <!-- line chart -->
+            <div class="chart">
+                <!-- Line chart for the current year's data -->
+                <canvas id="yearlyLineChart"></canvas>
+            </div>
 
+            <script>
+                // Current Month Data (Line Chart)
+                const monthlyLabels = <?php echo json_encode($monthly_records['labels']); ?>;
+                const monthlyDistance = <?php echo json_encode($monthly_records['distance']); ?>;
+                const currentMonth = "<?php echo $currentMonth; ?>";
 
-                <!-- Line chart for monthly data -->
-                <canvas id="lineChart"></canvas>
+                // Current Year Data (Line Chart)
+                const yearlyLabels = <?php echo json_encode($yearly_records['labels']); ?>;
+                const yearlyDistance = <?php echo json_encode($yearly_records['distance']); ?>;
+                const currentYear = "<?php echo $currentYear; ?>";
 
-                <script>
-                    // Extract data for the chart from the PHP variables
-                    const monthlyLabels = <?php echo json_encode($monthly_records['labels']); ?>;
-                    const monthlyDistance = <?php echo json_encode($monthly_records['distance']); ?>;
-                    const currentMonth = "<?php echo $currentMonth; ?>";
-                    // Prepare data for the line chart
-                    const lineChartData = {
-                        labels: monthlyLabels.map(date => date.split('-').slice(2).join('/')),  // Show "01", "02", etc.
-                        datasets: [{
-                            label: `Distance Traveled in ${currentMonth}`,
-                            data: monthlyDistance, // Total distance per month
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Area fill color
-                            borderColor: 'rgba(75, 192, 192, 1)', // Line color
-                            borderWidth: 2,
-                            fill: true, // Fill under the line
-                            tension: 0.4 // Smooth the line curve
-                        }]
-                    };
+                // Create Line Chart for Current Month
+                const monthlyChartData = {
+                    labels: monthlyLabels.map(date => date.split('-').slice(2).join('/')),  // Format date as "01", "02", etc.
+                    datasets: [{
+                        label: `Distance in ${currentMonth}`,  // Dynamic month label
+                        data: monthlyDistance,  // Total distance for the current month
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Area fill color
+                        borderColor: 'rgba(75, 192, 192, 1)',  // Line color
+                        borderWidth: 2,
+                        fill: true,  // Fill under the line
+                        tension: 0.4  // Smooth the line curve
+                    }]
+                };
 
-                    const lineCtx = document.getElementById('lineChart').getContext('2d');
-                    const lineChart = new Chart(lineCtx, {
-                        type: 'line', // Line chart type
-                        data: lineChartData,
-                        options: {
-                            scales: {
-                                x: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Date'
-                                    },
-                                    ticks: {
-                                        autoSkip: false, // Do not skip dates to ensure continuity across months
-                                        maxTicksLimit: 30, // Show up to 30 dates per month (adjust as needed)
-                                        callback: function (value, index, values) {
-                                            // Display only the first day of each month for clarity
-                                            const date = new Date(value);
-                                            return date.getDate() === 1 ? value : '';
-                                        }
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Amount'
-                                    }
+                // Create Line Chart for Current Year
+                const yearlyChartData = {
+                    labels: yearlyLabels,  // Labels for the current year's months
+                    datasets: [{
+                        label: `Distance in ${currentYear}`,  // Dynamic year label
+                        data: yearlyDistance,  // Total distance for each month of the year
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',  // Area fill color
+                        borderColor: 'rgba(153, 102, 255, 1)',  // Line color
+                        borderWidth: 2,
+                        fill: true,  // Fill under the line
+                        tension: 0.4  // Smooth the line curve
+                    }]
+                };
+
+                // Rendering Chart for Current Month
+                const monthlyCtx = document.getElementById('monthlyLineChart').getContext('2d');
+                const monthlyLineChart = new Chart(monthlyCtx, {
+                    type: 'line',  // Chart type (line chart)
+                    data: monthlyChartData,  // Data for current month
+                    options: {
+                        responsive: true,  // Make chart responsive to screen size
+                        plugins: {
+                            legend: {
+                                display: true  // Display legend
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,  // Show title for X-axis
+                                    text: 'Date'  // X-axis title
                                 }
                             },
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: true // Show legend for line chart
+                            y: {
+                                title: {
+                                    display: true,  // Show title for Y-axis
+                                    text: 'Distance'  // Y-axis title
                                 }
                             }
                         }
-                    });
-                </script>
-            </div>
+                    }
+                });
 
-            <!-- Pie Chart -->
-            <div class="chart" id="pie-chart">
-
-                <!-- pie chart -->
-                <canvas id="currentMonthPieChart"></canvas>
-                <script>
-                    // Use the current month's data passed from the controller
-                    let currentMonthTypes = <?php echo json_encode($current_month_types); ?>;
-                    let currentMonthDistances = <?php echo json_encode($current_month_distances); ?>;
-
-                    // Prepare data for the chart
-                    let currentMonthPieChartData = {
-                        labels: currentMonthTypes, // Vehicle types as labels
-                        datasets: [{
-                            label: 'Total Distance by Vehicle Type (Current Month)',
-                            data: currentMonthDistances, // Distances as data points
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    };
-
-                    // Create the pie chart
-                    let currentMonthPieCtx = document.getElementById('currentMonthPieChart').getContext('2d');
-                    let currentMonthPieChart = new Chart(currentMonthPieCtx, {
-                        type: 'pie', // Pie chart type
-                        data: currentMonthPieChartData,
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: true // Show legend for pie chart
+                // Rendering Chart for Current Year
+                const yearlyCtx = document.getElementById('yearlyLineChart').getContext('2d');
+                const yearlyLineChart = new Chart(yearlyCtx, {
+                    type: 'line',  // Chart type (line chart)
+                    data: yearlyChartData,  // Data for current year
+                    options: {
+                        responsive: true,  // Make chart responsive to screen size
+                        plugins: {
+                            legend: {
+                                display: true  // Display legend
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,  // Show title for X-axis
+                                    text: 'Month'  // X-axis title (Months of the current year)
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,  // Show title for Y-axis
+                                    text: 'Distance'  // Y-axis title
                                 }
                             }
                         }
-                    });
-                </script>
+                    }
+                });
+            </script>
 
 
-            </div>
+        </div>
+        <!-- bar Chart -->
+
+        <div class="chart" id="bar-chart">
+
+            <canvas id="myChart"></canvas>
+
+            <script>
+                // Extract data for the chart from the PHP variables
+                const weeklyLabels = <?php echo json_encode($weekly_records['labels']); ?>;
+                const weeklyDistance = <?php echo json_encode($weekly_records['distance']); ?>;
+
+
+                // Prepare data for the chart
+                const chartData = {
+                    labels: weeklyLabels, // 7-day periods on the X-axis
+                    datasets: [{
+                        label: 'Weekly Distance Traveled',
+                        data: weeklyDistance, // Sum of amounts per 7-day period
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar color
+                        borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                        borderWidth: 1
+                    }]
+                };
+
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const recordChart = new Chart(ctx, {
+                    type: 'bar', // Bar chart type
+                    data: chartData,
+                    options: {
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Date Range'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Distance Traveled (km)'
+                                }
+                            }
+                        },
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false // Hide legend if not needed
+                            }
+                        }
+                    }
+                });
+            </script>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- line chart -->
+
+
+    <!-- Table to display vehicle type and total distance -->
+
+    <!-- Bottom Section with 2 columns -->
+
+    <div class="bottom-section">
+        <div class="table" id="total-expense-table">
+
+            <section class="shopping-cart">
+                <h1 class="heading" style="color:  #2A9D8F;">Total Vehicle Log</h1>
+
+
+                <div class="user">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle Type</th>
+                                <th>Total Distance (km)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $grandTotalDistance = 0; // Initialize total distance
+                            foreach ($types as $index => $type):
+                                $distance = $distances[$index]; // Get corresponding distance for each type
+                                $grandTotalDistance += $distance; // Accumulate the total distance
+                                ?>
+
+                                <tr>
+                                    <td><?php echo htmlspecialchars($type); ?></td>
+                                    <td><?php echo number_format($distance, 2); ?> km</td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total Distance</th>
+                                <th>
+                                    <?php echo number_format($grandTotalDistance, 2); ?> km
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+
+            </section>
         </div>
 
 
 
 
+        <!--  monthly table  -->
 
 
+        <div class="table" id="monthly-expense-table">
+            <section class="shopping-cart">
+                <h1 class="heading" style="color: #2A9D8F;">Monthly Vehicle Log</h1>
 
-
-        <!-- line chart -->
-
-
-        <!-- Table to display vehicle type and total distance -->
-
-        <!-- Bottom Section with 2 columns -->
-
-        <div class="bottom-section">
-            <div class="table" id="total-expense-table">
-
-                <section class="shopping-cart">
-                    <h1 class="heading" style="color:  #2A9D8F;">Total Vehicle Log</h1>
-
-
-                    <div class="user">
-                        <table class="styled-table">
-                            <thead>
-                                <tr>
-                                    <th>Vehicle Type</th>
-                                    <th>Total Distance (km)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $grandTotalDistance = 0; // Initialize total distance
-                                foreach ($types as $index => $type):
-                                    $distance = $distances[$index]; // Get corresponding distance for each type
-                                    $grandTotalDistance += $distance; // Accumulate the total distance
-                                    ?>
-
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($type); ?></td>
-                                        <td><?php echo number_format($distance, 2); ?> km</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th>Total Distance</th>
-                                    <th>
-                                        <?php echo number_format($grandTotalDistance, 2); ?> km
-                                    </th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-
-
-                </section>
-            </div>
-
-
-
-
-            <!--  monthly table  -->
-
-
-            <div class="table" id="monthly-expense-table">
-                <section class="shopping-cart">
-                    <h1 class="heading" style="color: #2A9D8F;">Monthly Vehicle Log</h1>
-
-                    <!-- Year and Month Selection Dropdown -->
-                    <form method="get" action="" class="form-inline" style="display: flex; gap: 20px; align-items: center;">
-                        <select name="year" id="year" onchange="this.form.submit()" class="dropdown1">
+                <!-- Year and Month Selection Dropdown -->
+                <form id="filterForm" class="form-inline"
+                    style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px;">
+                    <div class="dropdown-container">
+                        <label for="year" class="dropdown-label">Select Year</label>
+                        <select name="year" id="year" class="dropdown1">
                             <option value="">-- Select a Year --</option>
                             <?php
                             for ($year = date('Y'); $year >= date('Y') - 5; $year--) {
@@ -357,33 +408,37 @@
                             }
                             ?>
                         </select>
+                    </div>
 
-                        
-                        <select name="month" id="month" onchange="this.form.submit()" class="dropdown1">
-                           
+
+                    <div class="dropdown-container">
+                        <label for="month" class="dropdown-label">Select Month</label>
+                        <select name="month" id="month" class="dropdown1">
                             <option value="">-- Select a Month --</option>
                             <?php
-                            foreach ($months as $month_num => $month_name) {
-                                $selected = ($month_num == $selected_month) ? 'selected' : '';
-                                echo "<option value='$month_num' $selected>$month_name</option>";
+                            foreach ($months as $key => $name) {
+                                $selected = ($key == $selected_month) ? 'selected' : '';
+                                echo "<option value='$key' $selected>$name</option>";
                             }
                             ?>
                         </select>
-                    </form>        
+                    </div>
+                </form>
 
-                    <!-- Show selected year and month -->
-                    <?php if ($selected_year && $selected_month): ?>
-                        <p style="font-size:18px;">
-                            <strong>Selected Period: </strong>
-                            <?php echo $months[(int) $selected_month] . ' ' . $selected_year; ?>
-                        </p>
-                    <?php endif; ?>
+                <!-- Show selected year and month -->
+                <?php if ($selected_year && $selected_month): ?>
+                    <p style="font-size:18px;">
+                        <strong>Selected Period: </strong>
+                        <?php echo $months[(int) $selected_month] . ' ' . $selected_year; ?>
+                    </p>
+                <?php endif; ?>
 
-                    <!-- Show table only if year and month are selected -->
+                <!-- Show table only if year and month are selected -->
+                <div id="distanceTableContainer">
                     <?php if ($selected_year && $selected_month && !empty($month_types)): ?>
                         <div class="user">
                             <table class="table" style="width: 100%; border-collapse: collapse;">
-                                <thead>
+                                <thead  class="styled-table">
                                     <tr>
                                         <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Vehicle Type
                                         </th>
@@ -399,9 +454,11 @@
                                         ?>
                                         <tr>
                                             <td style="border: 1px solid #ddd; padding: 8px;">
-                                                <?php echo htmlspecialchars($record['type']); ?></td>
+                                                <?php echo htmlspecialchars($record['type']); ?>
+                                            </td>
                                             <td style="border: 1px solid #ddd; padding: 8px;">
-                                                <?php echo number_format($record['total_distance'], 2); ?> km</td>
+                                                <?php echo number_format($record['total_distance'], 2); ?> km
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -418,10 +475,12 @@
                     <?php elseif ($selected_year && $selected_month): ?>
                         <p>No record found for the selected period.</p>
                     <?php endif; ?>
-                </section>
-            </div>
 
+                </div>
+            </section>
         </div>
+
+    </div>
     </div>
 
 
@@ -432,7 +491,24 @@
     <!-- monthly table -->
 
 
-
+    <script>
+        $(document).ready(function () {
+            $('#year, #month').change(function () {
+                var year = $('#year').val();
+                var month = $('#month').val();
+                if (year && month) {
+                    $.ajax({
+                        url: '<?php echo base_url("StatisticRecord/getMonthlyDistances"); ?>',
+                        type: 'GET',
+                        data: { year: year, month: month },
+                        success: function (response) {
+                            $('#distanceTableContainer').html(response);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
     <script>
 

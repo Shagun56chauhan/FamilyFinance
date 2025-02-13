@@ -35,10 +35,11 @@ class StatisticRecord extends CI_Controller
 
 
 // Get selected month from the dropdown
-// Get selected year and month from the dropdown
-$selected_year = $this->input->get('year');
-$selected_month = $this->input->get('month');
+  // Get selected year and month from the dropdown
+  $selected_year = !empty($this->input->get('year')) ? $this->input->get('year') : date('Y');
 
+  // Ensure the month is always two digits (e.g., '02' instead of '2')
+  $selected_month = !empty($this->input->get('month')) ? str_pad($this->input->get('month'), 2, '0', STR_PAD_LEFT) : date('m');
 // Fetch vehicle log data based on selected year and month
 $data['month_types'] = ($selected_year && $selected_month && $user_id) ? 
     $this->StatisticRecordModel->get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id) : [];
@@ -126,13 +127,17 @@ $data['current_month_distances'] = $current_month_distances;
 // $startDate = date('Y-m-01'); // First day of the current month
 // $endDate = date('Y-m-t'); // Last day of the current month
 
-// Get monthly record for the current month
-$monthlyRecords = $this->StatisticRecordModel->getMonthlyVehicleRecords($user_id);
+ // Fetch the vehicle records for the current month
+ $monthlyRecords = $this->StatisticRecordModel->getMonthlyVehicleRecords($user_id);
+ $data['monthly_records'] = $this->prepareMonthlyData($monthlyRecords);
 
-// Prepare the monthly data for the chart
-$data['monthly_records'] = $this->prepareMonthlyData($monthlyRecords);
+ // Fetch the vehicle records for the current year
+ $yearlyRecords = $this->StatisticRecordModel->getYearlyVehicleRecords($user_id);
+ $data['yearly_records'] = $this->prepareYearlyData($yearlyRecords);
 
-$data['currentMonth'] = date('F Y');  // e.g., "November 2024"
+ // Add the current month and year data for display
+ $data['currentMonth'] = date('F Y');  // Current month
+ $data['currentYear'] = date('Y');     // Current year
 // line chart
 
          $this->load->view("statisticrecord", $data);
@@ -270,6 +275,126 @@ private function prepareMonthlyData($monthlyRecords) {
 // line chart
 
 
+
+
+// yearly line chart
+
+
+// Prepare data for the last 12 months
+private function prepareYearlyData($yearlyRecords) {
+    $yearlyData = [
+        'labels' => [],  // Store all months of the current year
+        'distance' => []  // Store calculated distances for each month
+    ];
+
+    // Get the current year
+    $currentYear = date('Y');  // Current year
+    $months = [
+        '01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr',
+        '05' => 'May', '06' => 'Jun', '07' => 'Jul', '08' => 'Aug',
+        '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec'
+    ];
+
+    // Initialize all months with 0 distance
+    foreach ($months as $monthNum => $monthName) {
+        $yearlyData['labels'][] = $monthName;
+        $yearlyData['distance'][] = 0;  // Initialize distance for each month to 0
+    }
+
+    // Track previous readings for each vehicle type and month
+    $previousReadingsByTypeAndMonth = [];
+
+    foreach ($yearlyRecords as $record) {
+        $recordDate = $record['record_date'];
+        $vehicleType = $record['vehicle_type'];
+        $currentReading = (float) $record['reading'];
+
+        // Extract the month and year from the record date
+        $year = date('Y', strtotime($recordDate));
+        $month = date('m', strtotime($recordDate));
+
+        // Make sure it's for the current year
+        if ($year == $currentYear) {
+            $monthIndex = array_search($month, array_keys($months));  // Find the index of the month
+            if ($monthIndex !== false) {
+                // Initialize previous reading for this vehicle type if not set
+                if (!isset($previousReadingsByTypeAndMonth[$vehicleType][$month])) {
+                    $previousReadingsByTypeAndMonth[$vehicleType][$month] = null;
+                }
+
+                // Calculate distance for the same vehicle type and month
+                if ($previousReadingsByTypeAndMonth[$vehicleType][$month] !== null && $currentReading >= $previousReadingsByTypeAndMonth[$vehicleType][$month]) {
+                    $distance = $currentReading - $previousReadingsByTypeAndMonth[$vehicleType][$month];
+                    $yearlyData['distance'][$monthIndex] += $distance; // Add distance to the correct month's total
+                }
+
+                // Update the previous reading for this vehicle type and month
+                $previousReadingsByTypeAndMonth[$vehicleType][$month] = $currentReading;
+            }
+        }
+    }
+
+    return $yearlyData;
+}
+
+
+
+
+
+
+// yearly line chart
+
+
+
+
+
+// monthly table
+public function getMonthlyDistances()
+{
+    $user_id = $this->session->userdata('user_id');
+    $selected_year = $this->input->get('year');
+    $selected_month = $this->input->get('month');
+
+    // Fetch distance data if year and month are selected, otherwise set to an empty array
+    $month_types = ($selected_year && $selected_month && $user_id)
+        ? $this->StatisticRecordModel->get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id)
+        : [];
+
+    $grandTotalDistance = 0;
+    ob_start();
+    if (!empty($month_types)) {
+        echo '<div class="user">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle Type</th>
+                        <th>Total Distance (km)</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        foreach ($month_types as $record) {
+            $grandTotalDistance += $record['total_distance'];
+            echo '<tr>
+                    <td>' . htmlspecialchars($record['type']) . '</td>
+                    <td>' . number_format($record['total_distance'], 2) . ' km</td>
+                </tr>';
+        }
+        echo '</tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total Distance</th>
+                        <th>' . number_format($grandTotalDistance, 2) . ' km</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>';
+    } else {
+        echo '<p style="text-align: center;">No distances found for the selected period.</p>';
+    }
+    $html = ob_get_clean();
+    echo $html;
+}
+// monthly table
 
 
 }

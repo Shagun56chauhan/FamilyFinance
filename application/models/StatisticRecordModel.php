@@ -210,23 +210,36 @@ public function getTotalDistanceForCurrentMonth($user_id) {
 // line chart
 
 public function getMonthlyVehicleRecords($user_id) {
+    // Get the start and end dates for the current month
+    $currentMonthStart = date('Y-m-01');
+    $currentMonthEnd = date('Y-m-t');
+
     $this->db->select('reading, DATE(created_at) as record_date, type as vehicle_type');
     $this->db->from('vehicle');
     $this->db->where('user_id', $user_id);
-
-    // Filter for the current month
-    $currentMonthStart = date('Y-m-01');  // Start of the current month
-    $currentMonthEnd = date('Y-m-t');  // End of the current month
-
     $this->db->where('DATE(created_at) >=', $currentMonthStart);
     $this->db->where('DATE(created_at) <=', $currentMonthEnd);
-
-    $this->db->order_by('created_at', 'ASC');  // Ensure chronological order
+    $this->db->order_by('created_at', 'ASC'); 
 
     $query = $this->db->get();
     return $query->result_array();
 }
 
+public function getYearlyVehicleRecords($user_id) {
+    // Get the start and end dates for the current year
+    $currentYearStart = date('Y-01-01');
+    $currentYearEnd = date('Y-12-31');
+
+    $this->db->select('reading, DATE(created_at) as record_date, type as vehicle_type');
+    $this->db->from('vehicle');
+    $this->db->where('user_id', $user_id);
+    $this->db->where('DATE(created_at) >=', $currentYearStart);
+    $this->db->where('DATE(created_at) <=', $currentYearEnd);
+    $this->db->order_by('created_at', 'ASC'); 
+
+    $query = $this->db->get();
+    return $query->result_array();
+}
 
 
 
