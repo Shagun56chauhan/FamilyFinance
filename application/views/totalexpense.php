@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css"
         integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
-        integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
 
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -110,7 +110,20 @@
                         data: newpieChartData,
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false, // Allow manual size control
+
                             plugins: {
+                                title: {
+                                    display: true,  // Enable title
+                                    text: 'Total Expense For Month',  // Custom text at the top
+                                    font: {
+                                        size: 13 // Adjust font size
+                                    },
+                                    padding: {
+                                        top: 10, // Space from top
+                                        bottom: 20 // Space before chart
+                                    }
+                                },
                                 legend: {
                                     position: 'top',
                                     labels: {
@@ -137,8 +150,6 @@
 
             <!-- Pie Chart -->
             <div class="chart" id="pie-chart">
-
-
                 <!-- pie chart -->
                 <canvas id="pieChart"></canvas>
                 <script>
@@ -218,12 +229,25 @@
                         data: pieChartData,
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false, // Allow manual size control
                             plugins: {
+                                title: {
+                                    display: true,  // Enable title
+                                    text: 'Total Expense',  // Custom text at the top
+                                    font: {
+                                        size: 13 // Adjust font size
+                                    },
+                                    padding: {
+                                        top: 10, // Space from top
+                                        bottom: 20 // Space before chart
+                                    }
+                                },
                                 legend: {
                                     display: true // Show legend for pie chart
                                 }
                             }
                         }
+
                     });
                 </script>
             </div>
@@ -239,10 +263,10 @@
         <!-- Middle Section with 1 column -->
 
         <div class="top-section">
-            <div class="chart">
+            <div class="chart" id="line-chart">
                 <canvas id="monthlyLineChart"></canvas>
             </div>
-            <div class="chart">
+            <div class="chart" id="line-chart">
                 <canvas id="yearlyLineChart"></canvas>
             </div>
 
@@ -269,6 +293,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // ✅ Prevent shrinking on small screens
                         scales: {
                             x: { title: { display: true, text: 'Day (01, 02, 03...)' } },
                             y: { title: { display: true, text: 'Amount' } }
@@ -294,6 +320,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // ✅ Prevent shrinking on small screens
                         scales: {
                             x: { title: { display: true, text: 'Month (Jan, Feb, Mar...)' } },
                             y: { title: { display: true, text: 'Amount' } }
@@ -334,6 +362,8 @@
                     type: 'bar', // Bar chart type
                     data: chartData,
                     options: {
+                        responsive: true,    
+                       maintainAspectRatio: false, // ✅ Prevent shrinking on small screens
                         scales: {
                             x: {
                                 beginAtZero: true,
@@ -350,7 +380,7 @@
                                 }
                             }
                         },
-                        responsive: true,
+                       
                         plugins: {
                             legend: {
                                 display: false // Hide legend if not needed

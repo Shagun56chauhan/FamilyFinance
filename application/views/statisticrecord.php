@@ -15,9 +15,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css"
         integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
         integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
 
 
     <!-- Include jQuery -->
@@ -79,7 +82,19 @@
                         data: currentMonthPieChartData,
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false, // Allow manual size control
                             plugins: {
+                                title: {
+                                    display: true,  // Enable title
+                                    text: 'Total Expense For Month',  // Custom text at the top
+                                    font: {
+                                        size: 13 // Adjust font size
+                                    },
+                                    padding: {
+                                        top: 10, // Space from top
+                                        bottom: 20 // Space before chart
+                                    }
+                                },
                                 legend: {
                                     display: true // Show legend for pie chart
                                 }
@@ -138,7 +153,19 @@
                         data: pieChartData,
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false, // Allow manual size control
                             plugins: {
+                                title: {
+                                    display: true,  // Enable title
+                                    text: 'Total Expense',  // Custom text at the top
+                                    font: {
+                                        size: 13 // Adjust font size
+                                    },
+                                    padding: {
+                                        top: 10, // Space from top
+                                        bottom: 20 // Space before chart
+                                    }
+                                },
                                 legend: {
                                     display: true // Show legend for pie chart
                                 }
@@ -156,12 +183,12 @@
 
         <!-- Middle Section with 1 column -->
         <div class="top-section">
-            <div class="chart">
+            <div class="chart" id="line-chart">
                 <!-- Line chart for current month's data -->
                 <canvas id="monthlyLineChart"></canvas>
             </div>
 
-            <div class="chart">
+            <div class="chart" id="line-chart">
                 <!-- Line chart for the current year's data -->
                 <canvas id="yearlyLineChart"></canvas>
             </div>
@@ -212,6 +239,7 @@
                     data: monthlyChartData,  // Data for current month
                     options: {
                         responsive: true,  // Make chart responsive to screen size
+                        maintainAspectRatio: false, // Allow manual size control
                         plugins: {
                             legend: {
                                 display: true  // Display legend
@@ -241,6 +269,7 @@
                     data: yearlyChartData,  // Data for current year
                     options: {
                         responsive: true,  // Make chart responsive to screen size
+                        maintainAspectRatio: false, // Allow manual size control
                         plugins: {
                             legend: {
                                 display: true  // Display legend
@@ -295,6 +324,8 @@
                     type: 'bar', // Bar chart type
                     data: chartData,
                     options: {
+                        responsive: true,    
+                        maintainAspectRatio: false, // ✅ Prevent shrinking on small screens
                         scales: {
                             x: {
                                 beginAtZero: true,

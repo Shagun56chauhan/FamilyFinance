@@ -507,6 +507,27 @@ canvas {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
+
+#pie-chart, #pie-chart2{
+    max-width: 600px; /* Adjust width */
+    max-height: 400px; /* Adjust height */
+    width: 100%; 
+    height: auto;
+}
+
+#line-chart{
+    width: 45vw; /* Chart width - 45% of viewport width */
+    min-width: 300px; /* Minimum width to avoid shrinking too much */
+    max-width: 600px; /* Maximum width for large screens */
+    height: 300px; /* Fixed height */
+}
+
+#bar-chart{
+    width: 100%;
+    height: 500px; /* Set fixed height */
+    min-height: 300px; /* Ensure it doesn't shrink too much */
+    margin: auto; /* Center the chart */
+}
 .middle-section {
     grid-column: span 2;
 }
@@ -742,6 +763,16 @@ canvas {
 
     .bottom-section {
         grid-template-columns: 1fr; /* Single column layout */
+    }
+
+    #line-chart{
+        width: 90vw; /* Small screens par full width le */
+        height: 300px;
+    }
+
+    #bar-chart{
+        width: 100%;
+        height: 300px; /* Set fixed height */
     }
 
     /* statistics */
