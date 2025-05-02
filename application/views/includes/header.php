@@ -8,7 +8,7 @@
                     <a href="<?php echo base_url('Expense'); ?>" id="shagu">Add Expense</a>
                     <a href="<?php echo base_url('ViewExpense'); ?>" id="shagu">View Expense</a>
                     <a href="<?php echo base_url('TotalExpense'); ?>" id="shagu">Statistics</a>
-                    <a href="<?php echo base_url('Setlimit'); ?>" id="shagu">Set Limit</a>
+                    <a href="<?php echo base_url('SetLimit'); ?>" id="shagu">Set Limit</a>
                 </div>
             </div>
 
