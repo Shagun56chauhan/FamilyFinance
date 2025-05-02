@@ -459,7 +459,7 @@ button:hover {
 /* Make charts responsive */
 canvas {
     max-width: 100%;
-    height: auto;
+    height: 400px;
 }
 
 /* Table styling */
@@ -493,6 +493,7 @@ canvas {
 
 
 
+
 /* statistic chart */
 
 
@@ -519,7 +520,7 @@ canvas {
     width: 45vw; /* Chart width - 45% of viewport width */
     min-width: 300px; /* Minimum width to avoid shrinking too much */
     max-width: 600px; /* Maximum width for large screens */
-    height: 300px; /* Fixed height */
+    height: 400px; /* Fixed height */
 }
 
 #bar-chart{

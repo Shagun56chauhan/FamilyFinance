@@ -112,7 +112,7 @@ public function get_monthly_types( $user_id) {
  public function get_expenses_by_year_month($year, $month, $user_id)
 {
     // Fetch aggregated expenses by type for the given year and month
-    $query = $this->db->select('type, SUM(amount) as amount')
+    $query = $this->db->select('type, SUM(amount) as amount, set_limit')
                       ->from('expense')
                       ->where('user_id', $user_id) // Filter by user ID
                       ->where('YEAR(created_at)', $year) // Filter by year

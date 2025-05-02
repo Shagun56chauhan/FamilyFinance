@@ -226,14 +226,19 @@ public function getMonthlyExpenses()
                     <tr>
                         <th>Expense Type</th>
                         <th>Amount</th>
+                        <th>Set Limit</th>
+                        <th>Difference</th>
                     </tr>
                 </thead>
                 <tbody>';
         foreach ($month_types as $expense) {
             $totalAmount += $expense['amount'];
+            $remaining_limit = $expense['set_limit'] - $expense['amount']; // Calculate remaining limit
             echo '<tr>
                     <td>' . htmlspecialchars($expense['type']) . '</td>
                     <td>' . number_format($expense['amount'], 2) . '</td>
+                    <td>' . number_format($expense['set_limit'], 2) . '</td>
+                    <td>' . number_format($remaining_limit, 2) . '</td>
                 </tr>';
         }
         echo '</tbody>
@@ -241,6 +246,7 @@ public function getMonthlyExpenses()
                     <tr>
                         <th style="font-size:20px;">TOTAL</th>
                         <th style="font-size:20px;">' . number_format($totalAmount, 2) . '</th>
+                       
                     </tr>
                 </tfoot>
             </table>

@@ -115,7 +115,7 @@
                             plugins: {
                                 title: {
                                     display: true,  // Enable title
-                                    text: 'Total Expense For Month',  // Custom text at the top
+                                    text: 'Total Expense For  <?php echo $months[$selected_month] . " " . $selected_year; ?>',  // Custom text at the top
                                     font: {
                                         size: 13 // Adjust font size
                                     },
@@ -283,7 +283,7 @@
                     data: {
                         labels: monthlyLabels,
                         datasets: [{
-                            label: 'Monthly Expenditure',
+                            label: 'Monthly Expenditure  <?php echo $months[$selected_month] . " " . $selected_year; ?>',
                             data: monthlyAmounts,
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
@@ -310,7 +310,7 @@
                     data: {
                         labels: yearlyLabels,
                         datasets: [{
-                            label: 'Yearly Expenditure',
+                            label: 'Yearly Expenditure  <?php echo " " . $selected_year; ?>',
                             data: yearlyAmounts,
                             backgroundColor: 'rgba(255, 99, 132, 0.2)',
                             borderColor: 'rgba(255, 99, 132, 1)',
@@ -522,6 +522,8 @@
                                     <tr>
                                         <th>Expense Type</th>
                                         <th>Amount</th>
+                                        <th>Limit</th>
+                                        <th>Difference</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -529,10 +531,13 @@
                                     $totalAmount = 0;
                                     foreach ($month_types as $expense):
                                         $totalAmount += $expense['amount'];
+                                        $remaining_limit = $expense['set_limit'] - $expense['amount']; // Calculate remaining limit
                                         ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($expense['type']); ?></td>
                                             <td><?php echo number_format($expense['amount'], 2); ?></td>
+                                            <td><?php echo number_format($expense['set_limit'], 2); ?></td>
+                                            <td><?php echo number_format($remaining_limit, 2); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -542,6 +547,7 @@
                                         <th style="font-size:20px;">
                                             <?php echo number_format($totalAmount, 2); ?>
                                         </th>
+                                      
                                     </tr>
                                 </tfoot>
                             </table>

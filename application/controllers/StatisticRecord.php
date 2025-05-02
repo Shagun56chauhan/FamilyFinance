@@ -101,21 +101,31 @@ $data['months'] = [
 // monthlypie
 
 
-$data['current_month_distances_by_type'] = $this->StatisticRecordModel->getTotalDistanceForCurrentMonth($user_id);
+  // Prepare data for the current month pie chart
+  $data['current_month_distances_by_type'] = $this->StatisticRecordModel->getTotalDistanceForCurrentMonth($user_id, $selected_year, $selected_month);
+  $current_month_types = [];
+  $current_month_distances = [];
 
-// Prepare data for the current month pie chart
-$current_month_types = [];
-$current_month_distances = [];
+  foreach ($data['current_month_distances_by_type'] as $type => $distance) {
+      $current_month_types[] = $type; // Vehicle type
+      $current_month_distances[] = $distance; // Distance for the type
+  }
 
-foreach ($data['current_month_distances_by_type'] as $type => $distance) {
-    $current_month_types[] = $type; // Vehicle type
-    $current_month_distances[] = $distance; // Distance for the type
-}
+  // Pass the data to the view
+  $data['current_month_types'] = $current_month_types;
+  $data['current_month_distances'] = $current_month_distances;
 
-// Pass the data to the view
-$data['current_month_types'] = $current_month_types;
-$data['current_month_distances'] = $current_month_distances;
+  // Fetch the vehicle records for the current month
+  $monthlyRecords = $this->StatisticRecordModel->getMonthlyVehicleRecords($user_id);
+  $data['monthly_records'] = $this->prepareMonthlyData($monthlyRecords);
 
+  // Fetch the vehicle records for the current year
+  $yearlyRecords = $this->StatisticRecordModel->getYearlyVehicleRecords($user_id);
+  $data['yearly_records'] = $this->prepareYearlyData($yearlyRecords, $selected_year);
+
+  // Add the current month and year data for display
+  $data['currentMonth'] = date('F Y');  // Current month
+  $data['currentYear'] = $selected_year;  // Selected year
 
 
 // monthlypie
@@ -133,7 +143,7 @@ $data['current_month_distances'] = $current_month_distances;
 
  // Fetch the vehicle records for the current year
  $yearlyRecords = $this->StatisticRecordModel->getYearlyVehicleRecords($user_id);
- $data['yearly_records'] = $this->prepareYearlyData($yearlyRecords);
+ $data['yearly_records'] = $this->prepareYearlyData($yearlyRecords,  $selected_year);
 
  // Add the current month and year data for display
  $data['currentMonth'] = date('F Y');  // Current month
@@ -174,22 +184,18 @@ private function prepareWeeklyData($weeklyRecord) {
         $vehicleType = $record['vehicle_type'];
         $currentReading = (float) $record['reading'];
 
-        // Find the correct key for the record's date
-        $key = array_search($recordDate, $weeklyData['labels']);
-        if ($key !== false) {
-            // Initialize previous reading for this vehicle type if not set
-            if (!isset($previousReadingsByType[$vehicleType])) {
-                $previousReadingsByType[$vehicleType] = null;
-            }
+        // Calculate distance for the same vehicle type from the beginning
+        if (!isset($previousReadingsByType[$vehicleType])) {
+            $previousReadingsByType[$vehicleType] = $currentReading;
+        } else {
+            $distance = $currentReading - $previousReadingsByType[$vehicleType];
+            $previousReadingsByType[$vehicleType] = $currentReading;
 
-            // Calculate distance for the same vehicle type
-            if ($previousReadingsByType[$vehicleType] !== null && $currentReading >= $previousReadingsByType[$vehicleType]) {
-                $distance = $currentReading - $previousReadingsByType[$vehicleType];
+            // Find the correct key for the record's date
+            $key = array_search($recordDate, $weeklyData['labels']);
+            if ($key !== false) {
                 $weeklyData['distance'][$key] += $distance; // Add distance to the correct day's total
             }
-
-            // Update the previous reading for this vehicle type
-            $previousReadingsByType[$vehicleType] = $currentReading;
         }
     }
 
@@ -246,26 +252,22 @@ private function prepareMonthlyData($monthlyRecords) {
         $vehicleType = $record['vehicle_type'];
         $currentReading = (float) $record['reading'];
 
-    // Find the correct key for the record's date
-    $key = array_search($recordDate, $monthlyData['labels']);
-    if ($key !== false) {
-        // Initialize previous reading for this vehicle type if not set
-        if (!isset($previousReadingsByType[$vehicleType])) {
-            $previousReadingsByType[$vehicleType] = null;
-        }
+    // Calculate distance for the same vehicle type from the beginning
+    if (!isset($previousReadingsByType[$vehicleType])) {
+        $previousReadingsByType[$vehicleType] = $currentReading;
+    } else {
+        $distance = $currentReading - $previousReadingsByType[$vehicleType];
+        $previousReadingsByType[$vehicleType] = $currentReading;
 
-        // Calculate distance for the same vehicle type
-        if ($previousReadingsByType[$vehicleType] !== null && $currentReading >= $previousReadingsByType[$vehicleType]) {
-            $distance = $currentReading - $previousReadingsByType[$vehicleType];
+        // Find the correct key for the record's date
+        $key = array_search($recordDate, $monthlyData['labels']);
+        if ($key !== false) {
             $monthlyData['distance'][$key] += $distance; // Add distance to the correct day's total
         }
-
-        // Update the previous reading for this vehicle type
-        $previousReadingsByType[$vehicleType] = $currentReading;
     }
 }
 
-    return $monthlyData;
+return $monthlyData;
 }
 
 
@@ -281,14 +283,14 @@ private function prepareMonthlyData($monthlyRecords) {
 
 
 // Prepare data for the last 12 months
-private function prepareYearlyData($yearlyRecords) {
+private function prepareYearlyData($yearlyRecords, $selectedYear) {
     $yearlyData = [
         'labels' => [],  // Store all months of the current year
         'distance' => []  // Store calculated distances for each month
     ];
 
     // Get the current year
-    $currentYear = date('Y');  // Current year
+    // $currentYear = date('Y');  // Current year
     $months = [
         '01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr',
         '05' => 'May', '06' => 'Jun', '07' => 'Jul', '08' => 'Aug',
@@ -302,7 +304,7 @@ private function prepareYearlyData($yearlyRecords) {
     }
 
     // Track previous readings for each vehicle type and month
-    $previousReadingsByTypeAndMonth = [];
+    $previousReadingsByType = [];
 
     foreach ($yearlyRecords as $record) {
         $recordDate = $record['record_date'];
@@ -313,23 +315,20 @@ private function prepareYearlyData($yearlyRecords) {
         $year = date('Y', strtotime($recordDate));
         $month = date('m', strtotime($recordDate));
 
-        // Make sure it's for the current year
-        if ($year == $currentYear) {
-            $monthIndex = array_search($month, array_keys($months));  // Find the index of the month
-            if ($monthIndex !== false) {
-                // Initialize previous reading for this vehicle type if not set
-                if (!isset($previousReadingsByTypeAndMonth[$vehicleType][$month])) {
-                    $previousReadingsByTypeAndMonth[$vehicleType][$month] = null;
-                }
+      
+        // Calculate distance for the same vehicle type from the beginning
+        if (!isset($previousReadingsByType[$vehicleType])) {
+            $previousReadingsByType[$vehicleType] = $currentReading;
+        } else {
+            $distance = $currentReading - $previousReadingsByType[$vehicleType];
+            $previousReadingsByType[$vehicleType] = $currentReading;
 
-                // Calculate distance for the same vehicle type and month
-                if ($previousReadingsByTypeAndMonth[$vehicleType][$month] !== null && $currentReading >= $previousReadingsByTypeAndMonth[$vehicleType][$month]) {
-                    $distance = $currentReading - $previousReadingsByTypeAndMonth[$vehicleType][$month];
-                    $yearlyData['distance'][$monthIndex] += $distance; // Add distance to the correct month's total
+            // Add distance to the correct month's total if it's the selected year
+            if ($year == $selectedYear) {
+                $monthIndex = array_search($month, array_keys($months));
+                if ($monthIndex !== false) {
+                    $yearlyData['distance'][$monthIndex] += $distance;
                 }
-
-                // Update the previous reading for this vehicle type and month
-                $previousReadingsByTypeAndMonth[$vehicleType][$month] = $currentReading;
             }
         }
     }
@@ -395,6 +394,57 @@ public function getMonthlyDistances()
     echo $html;
 }
 // monthly table
+
+
+
+// monthlypie chart
+
+// Prepare data for the current month's pie chart
+// private function prepareCurrentMonthPieData($monthlyRecords, $selectedMonth, $selectedYear) {
+//     $currentMonthData = [
+//         'types' => [],
+//         'distances' => []
+//     ];
+
+//     // Track previous readings for each vehicle type
+//     $previousReadingsByType = [];
+//     $distancesByType = [];
+
+//     foreach ($monthlyRecords as $record) {
+//         $recordDate = $record['record_date'];
+//         $vehicleType = $record['vehicle_type'];
+//         $currentReading = (float) $record['reading'];
+
+//         // Extract the month and year from the record date
+//         $year = date('Y', strtotime($recordDate));
+//         $month = date('m', strtotime($recordDate));
+
+//         // Calculate distance for the same vehicle type from the beginning
+//         if (!isset($previousReadingsByType[$vehicleType])) {
+//             $previousReadingsByType[$vehicleType] = $currentReading;
+//         } else{
+//             $distance = $currentReading - $previousReadingsByType[$vehicleType];
+//             $previousReadingsByType[$vehicleType] = $currentReading;
+
+//             // Add distance to the correct vehicle type's total if it's the selected month and year
+//             if ($year == $selectedYear && $month == $selectedMonth) {
+//                 if (!isset($distancesByType[$vehicleType])) {
+//                     $distancesByType[$vehicleType] = 0;
+//                 }
+//                 $distancesByType[$vehicleType] += $distance;
+//             }
+//         }
+//     }
+
+//     // Prepare the data for the pie chart
+//     foreach ($distancesByType as $type => $distance) {
+//         $currentMonthData['types'][] = $type;
+//         $currentMonthData['distances'][] = $distance;
+//     }
+
+//     return $currentMonthData;
+// }
+// monthlypie chart
 
 
 }

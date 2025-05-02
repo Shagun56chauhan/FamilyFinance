@@ -86,7 +86,7 @@
                             plugins: {
                                 title: {
                                     display: true,  // Enable title
-                                    text: 'Total Expense For Month',  // Custom text at the top
+                                    text: 'Total Expense For <?php echo $months[(int) $selected_month] . ' ' . $selected_year; ?>',  // Custom text at the top
                                     font: {
                                         size: 13 // Adjust font size
                                     },

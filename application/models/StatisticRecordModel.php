@@ -23,15 +23,14 @@ class StatisticRecordModel extends CI_Model
 
 
 // Fetch weekly grouped data for the last 7 days, including today
-public function getWeeklyRecord($user_id) {
-    // Query to get vehicle readings for the last 7 days
-    $this->db->select('reading, type as vehicle_type, DATE(created_at) as record_date');
-    $this->db->from('vehicle');
-    $this->db->where('user_id', $user_id);
-    $this->db->where('DATE(created_at) >=', date('Y-m-d', strtotime('-6 days'))); // Get readings for the last 7 days
-    $this->db->where('DATE(created_at) <=', date('Y-m-d')); // Up to today
-    $this->db->order_by('record_date', 'ASC');
-    $query = $this->db->get();
+public function getWeeklyRecord($user_id)
+{
+    // Fetch records for the user, ordered by date
+    $query = $this->db->select('type as vehicle_type, reading, DATE(created_at) as record_date')
+                      ->from('vehicle')
+                      ->where('user_id', $user_id) // Filter by user ID
+                      ->order_by('created_at', 'ASC')
+                      ->get();
 
     return $query->result_array();
 }
@@ -92,47 +91,44 @@ public function getTotalDistanceByType($user_id) {
 // monthlypie
 
 
-public function getTotalDistanceForCurrentMonth($user_id) {
-    // Get the first and last dates of the current month
-    $start_date = date('Y-m-01'); // First day of the current month
-    $end_date = date('Y-m-t');   // Last day of the current month
 
-    $this->db->select('type, reading, created_at');
-    $this->db->from('vehicle');
-    $this->db->where('user_id', $user_id);
-    $this->db->where('created_at >=', $start_date);
-    $this->db->where('created_at <=', $end_date);
-    $this->db->order_by('created_at ASC');
-    $query = $this->db->get();
-    $readings = $query->result_array();
+public function getTotalDistanceForCurrentMonth($user_id, $selected_year, $selected_month) {
+    // Fetch all records for the user, ordered by date
+    $query = $this->db->select('type, reading, DATE(created_at) as record_date')
+                      ->from('vehicle')
+                      ->where('user_id', $user_id) // Filter by user ID
+                      ->order_by('created_at', 'ASC')
+                      ->get();
+
+    $records = $query->result_array();
 
     $current_month_distances = [];
-    
-    // Group readings by vehicle type
-    $grouped_readings = [];
-    foreach ($readings as $record) {
-        $type = $record['type'];
-        $reading = floatval($record['reading']);
-        if (!isset($grouped_readings[$type])) {
-            $grouped_readings[$type] = [];
-        }
-        $grouped_readings[$type][] = $reading;
-    }
+    $previousReadingsByType = [];
 
-    // Calculate total distance for each vehicle type
-    foreach ($grouped_readings as $type => $type_readings) {
-        $total_distance = 0;
+    foreach ($records as $record) {
+        $recordDate = $record['record_date'];
+        $vehicleType = $record['type'];
+        $currentReading = (float) $record['reading'];
 
-        // Iterate over readings to calculate total distance
-        for ($i = 1; $i < count($type_readings); $i++) {
-            $distance = $type_readings[$i] - $type_readings[$i - 1];
-            if ($distance > 0) { // Only consider positive distances
-                $total_distance += $distance;
+        // Extract the month and year from the record date
+        $year = date('Y', strtotime($recordDate));
+        $month = date('m', strtotime($recordDate));
+
+        // Calculate distance for the same vehicle type from the beginning
+        if (!isset($previousReadingsByType[$vehicleType])) {
+            $previousReadingsByType[$vehicleType] = $currentReading;
+        } else {
+            $distance = $currentReading - $previousReadingsByType[$vehicleType];
+            $previousReadingsByType[$vehicleType] = $currentReading;
+
+            // Add distance to the correct vehicle type's total if it's the selected month and year
+            if ($year == $selected_year && $month == $selected_month) {
+                if (!isset($current_month_distances[$vehicleType])) {
+                    $current_month_distances[$vehicleType] = 0;
+                }
+                $current_month_distances[$vehicleType] += $distance;
             }
         }
-
-        // Store total distance for the current vehicle type
-        $current_month_distances[$type] = $total_distance;
     }
 
     // Sort distances in descending order (optional)
@@ -140,8 +136,6 @@ public function getTotalDistanceForCurrentMonth($user_id) {
 
     return $current_month_distances; // Return distances for the current month
 }
-
-
 
 // monthlypie
 
@@ -209,35 +203,27 @@ public function getTotalDistanceForCurrentMonth($user_id) {
 
 // line chart
 
-public function getMonthlyVehicleRecords($user_id) {
-    // Get the start and end dates for the current month
-    $currentMonthStart = date('Y-m-01');
-    $currentMonthEnd = date('Y-m-t');
+public function getMonthlyVehicleRecords($user_id)
+{
+    // Fetch records for the user, ordered by date
+    $query = $this->db->select('type as vehicle_type, reading, DATE(created_at) as record_date')
+                      ->from('vehicle')
+                      ->where('user_id', $user_id) // Filter by user ID
+                      ->order_by('created_at', 'ASC')
+                      ->get();
 
-    $this->db->select('reading, DATE(created_at) as record_date, type as vehicle_type');
-    $this->db->from('vehicle');
-    $this->db->where('user_id', $user_id);
-    $this->db->where('DATE(created_at) >=', $currentMonthStart);
-    $this->db->where('DATE(created_at) <=', $currentMonthEnd);
-    $this->db->order_by('created_at', 'ASC'); 
-
-    $query = $this->db->get();
     return $query->result_array();
 }
 
-public function getYearlyVehicleRecords($user_id) {
-    // Get the start and end dates for the current year
-    $currentYearStart = date('Y-01-01');
-    $currentYearEnd = date('Y-12-31');
+public function getYearlyVehicleRecords($user_id)
+{
+    // Fetch records for the user, ordered by date
+    $query = $this->db->select('type as vehicle_type, reading, DATE(created_at) as record_date')
+                      ->from('vehicle')
+                      ->where('user_id', $user_id) // Filter by user ID
+                      ->order_by('created_at', 'ASC')
+                      ->get();
 
-    $this->db->select('reading, DATE(created_at) as record_date, type as vehicle_type');
-    $this->db->from('vehicle');
-    $this->db->where('user_id', $user_id);
-    $this->db->where('DATE(created_at) >=', $currentYearStart);
-    $this->db->where('DATE(created_at) <=', $currentYearEnd);
-    $this->db->order_by('created_at', 'ASC'); 
-
-    $query = $this->db->get();
     return $query->result_array();
 }
 
@@ -252,51 +238,58 @@ public function getYearlyVehicleRecords($user_id) {
 
 
  // Function to get expenses by selected month
- public function get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id)
+
+public function get_vehicle_data_by_month_year($selected_year, $selected_month, $user_id)
 {
-    // Fetch records for the selected year and month, ordered by date
-    $query = $this->db->select('type, reading, created_at')
+    // Fetch all records for the user, ordered by date
+    $query = $this->db->select('type, reading, DATE(created_at) as record_date')
                       ->from('vehicle')
                       ->where('user_id', $user_id) // Filter by user ID
-                      ->where('YEAR(created_at)', $selected_year)
-                      ->where('MONTH(created_at)', $selected_month)
                       ->order_by('created_at', 'ASC')
                       ->get();
 
     $records = $query->result_array();
 
-    $vehicle_readings = [];
-    $total_distances = [];
+    $current_month_distances = [];
+    $previousReadingsByType = [];
 
-    // Group readings by vehicle type and calculate the total distance
     foreach ($records as $record) {
-        $vehicle_type = $record['type'];
-        $reading = $record['reading'];
+        $recordDate = $record['record_date'];
+        $vehicleType = $record['type'];
+        $currentReading = (float) $record['reading'];
 
-        if (!isset($vehicle_readings[$vehicle_type])) {
-            $vehicle_readings[$vehicle_type] = [];
+        // Extract the month and year from the record date
+        $year = date('Y', strtotime($recordDate));
+        $month = date('m', strtotime($recordDate));
+
+        // Calculate distance for the same vehicle type from the beginning
+        if (!isset($previousReadingsByType[$vehicleType])) {
+            $previousReadingsByType[$vehicleType] = $currentReading;
+        } else {
+            $distance = $currentReading - $previousReadingsByType[$vehicleType];
+            $previousReadingsByType[$vehicleType] = $currentReading;
+
+            // Add distance to the correct vehicle type's total if it's the selected month and year
+            if ($year == $selected_year && $month == $selected_month) {
+                if (!isset($current_month_distances[$vehicleType])) {
+                    $current_month_distances[$vehicleType] = 0;
+                }
+                $current_month_distances[$vehicleType] += $distance;
+            }
         }
-
-        // Add the reading to the list for this vehicle type
-        $vehicle_readings[$vehicle_type][] = $reading;
     }
 
-    // Calculate the total distance for each vehicle type
-    foreach ($vehicle_readings as $vehicle_type => $readings) {
-        $total_distance = 0;
-        for ($i = 1; $i < count($readings); $i++) {
-            $total_distance += ($readings[$i] - $readings[$i - 1]);
-        }
-        $total_distances[] = [
-            'type' => $vehicle_type,
-            'total_distance' => $total_distance,
+    // Prepare the data in the required format
+    $result = [];
+    foreach ($current_month_distances as $type => $total_distance) {
+        $result[] = [
+            'type' => $type,
+            'total_distance' => $total_distance
         ];
     }
 
-    return $total_distances;
+    return $result; // Return distances for the current month
 }
-
-
 
 
 
